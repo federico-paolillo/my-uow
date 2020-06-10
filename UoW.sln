@@ -3,11 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW", "FP.UoW\FP.UoW.csproj", "{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW", "FP.UoW\FP.UoW.csproj", "{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Example", "FP.UoW.Example\FP.UoW.Example.csproj", "{26DBEDD3-AE71-494A-844E-10186307AC95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Example", "FP.UoW.Example\FP.UoW.Example.csproj", "{26DBEDD3-AE71-494A-844E-10186307AC95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Autofac", "FP.UoW.Autofac\FP.UoW.Autofac.csproj", "{E3B91E0B-4A13-43EA-8A8B-79F9B846A1B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Autofac", "FP.UoW.Autofac\FP.UoW.Autofac.csproj", "{E3B91E0B-4A13-43EA-8A8B-79F9B846A1B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{599337C8-B377-405C-BAA1-6440C8CB2FCA}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+		UoW.ruleset = UoW.ruleset
+		UoW.v3.ncrunchsolution.user = UoW.v3.ncrunchsolution.user
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

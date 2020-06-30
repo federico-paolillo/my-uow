@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FP.UoW\FP.UoW.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  	<DefineConstants>DEBUG</DefineConstants>
+  	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  	<CodeAnalysisRuleSet>../../UoW.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  	<CodeAnalysisRuleSet>../../UoW.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+</Project>

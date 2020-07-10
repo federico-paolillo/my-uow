@@ -33,12 +33,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var databaseUnitOfWorkServiceDescriptor = new ServiceDescriptor(typeof(IDatabaseUnitOfWork), ResolveUnitOfWork, ServiceLifetime.Transient);
             var databaseSessionServiceDescriptor = new ServiceDescriptor(typeof(IDatabaseSession), ResolveUnitOfWork, ServiceLifetime.Transient);
-            var databaseConnectionServiceDescriptor = new ServiceDescriptor(typeof(IDatabaseConnection), ResolveUnitOfWork, ServiceLifetime.Transient);
 
             services.Add(unitOfWorkServiceDescriptor);
             services.Add(databaseUnitOfWorkServiceDescriptor);
             services.Add(databaseSessionServiceDescriptor);
-            services.Add(databaseConnectionServiceDescriptor);
 
             return services;
         }

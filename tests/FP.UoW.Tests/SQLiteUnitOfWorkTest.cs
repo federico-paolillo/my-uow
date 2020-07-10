@@ -7,12 +7,24 @@ using System.Threading.Tasks;
 
 namespace FP.UoW.Tests
 {
+    public sealed class TestModel
+    {
+        public string Id { get; set; }
+
+        public string ColumnOne { get; set; }
+
+        public string ColumnTwo { get; set; }
+    }
+
     public class SQLiteUnitOfWorkTest
     {
         private string databaseFileName = null;
+
         private ServiceProvider serviceProvider = null;
+
+        private IServiceScope serviceScope = null;
+
         private IDatabaseUnitOfWork unitOfWork = null;
-        private IDatabaseSession databaseSession = null;
 
         [SetUp]
         public void Setup()
@@ -25,8 +37,9 @@ namespace FP.UoW.Tests
                 .AddSQLiteUoW(databaseConnectionString)
                 .BuildServiceProvider();
 
-            unitOfWork = serviceProvider.GetRequiredService<IDatabaseUnitOfWork>();
-            databaseSession = serviceProvider.GetRequiredService<IDatabaseSession>();
+            serviceScope = serviceProvider.CreateScope();
+
+            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IDatabaseUnitOfWork>();
         }
 
         [Test]
@@ -34,57 +47,64 @@ namespace FP.UoW.Tests
         {
             //Creates a table and inserts a row...
 
-            await unitOfWork.BeginAsync()
+            await unitOfWork.OpenConnectionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            await databaseSession.Connection.ExecuteAsync(@"
+            await unitOfWork.BeginTransactionAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await unitOfWork.Connection.ExecuteAsync(@"
                 CREATE TABLE TestModels(
                     Id TEXT PRIMARY KEY,
                     ColumnOne TEXT NOT NULL,
                     ColumnTwo TEXT NOT NULL
-                );", transaction: databaseSession.Transaction)
+                );", transaction: unitOfWork.Transaction)
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             var testModel = new TestModel { Id = Guid.NewGuid().ToString(), ColumnOne = "Value #1", ColumnTwo = "Value #2" };
 
-            await databaseSession.Connection.ExecuteAsync(@"
+            await unitOfWork.Connection.ExecuteAsync(@"
                 INSERT INTO TestModels(Id, ColumnOne, ColumnTwo)
                 VALUES (
                     @Id, 
                     @ColumnOne, 
                     @ColumnTwo
-                );", param: testModel, transaction: databaseSession.Transaction)
+                );", param: testModel, transaction: unitOfWork.Transaction)
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            await unitOfWork.CommitAsync()
+            await unitOfWork.CommitTransactionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             //..then reads the row, changes it and rolls back the changes
 
-            await unitOfWork.BeginAsync()
+            await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            var testModelFromDatabase = await databaseSession.Connection.QueryFirstOrDefaultAsync<TestModel>(@"
+            var testModelFromDatabase = await unitOfWork.Connection.QueryFirstOrDefaultAsync<TestModel>(@"
                 SELECT * FROM TestModels
-                ;", param: testModel, transaction: databaseSession.Transaction)
+                ;", param: testModel, transaction: unitOfWork.Transaction)
                  .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.That(testModelFromDatabase.Id, Is.EqualTo(testModel.Id));
 
-            await databaseSession.Connection.ExecuteAsync(@"
+            await unitOfWork.Connection.ExecuteAsync(@"
                 UPDATE TestModels
                 SET ColumnOne = 'Something else'
                 WHERE Id = @Id
-                ;", param: new { Id = testModel.Id }, transaction: databaseSession.Transaction)
+                ;", param: new { testModel.Id }, transaction: unitOfWork.Transaction)
             .ConfigureAwait(continueOnCapturedContext: false);
 
-            await unitOfWork.RollbackAsync()
+            await unitOfWork.RollbackTransactionAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await unitOfWork.CloseConnectionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
         }
 
         [TearDown]
         public void TearDown()
         {
+            serviceScope?.Dispose();
             serviceProvider?.Dispose();
 
             File.Delete(databaseFileName);

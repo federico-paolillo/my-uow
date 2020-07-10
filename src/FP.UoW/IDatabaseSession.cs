@@ -8,12 +8,12 @@ namespace FP.UoW
     public interface IDatabaseSession
     {
         /// <summary>
-        /// Current Connection, attempting to alter the Connection state directly is a mistake
+        /// Current connection, attempting to alter the connection state directly will result in an undefined behavior
         /// </summary>
         DbConnection Connection { get; }
 
         /// <summary>
-        /// Current Transaction, attempting to alter the Transaction state directly is a mistake
+        /// Current transaction, attempting to alter the transaction state directly will result in an undefined behavior
         /// </summary>
         DbTransaction Transaction { get; }
     }

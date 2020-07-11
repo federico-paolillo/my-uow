@@ -13,8 +13,10 @@ namespace FP.UoW
     {
         private readonly IDatabaseConnectionFactory connectionFactory = null;
 
+        /// <inheritdoc />
         public DbConnection Connection { get; private set; }
 
+        /// <inheritdoc />
         public DbTransaction Transaction { get; private set; }
 
         public UnitOfWork(IDatabaseConnectionFactory connectionFactory)
@@ -22,6 +24,7 @@ namespace FP.UoW
             this.connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
         }
 
+        /// <inheritdoc />
         public async Task OpenConnectionAsync(CancellationToken cancellationToken = default)
         {
             if (Connection != null) throw new InvalidOperationException("There is already a database connection open, you must close it before opening another one");
@@ -39,6 +42,7 @@ namespace FP.UoW
             Connection = newConnection;
         }
 
+        /// <inheritdoc />
         public async Task CloseConnectionAsync(CancellationToken cancellationToken = default)
         {
             if (Connection is null) return;
@@ -56,6 +60,7 @@ namespace FP.UoW
             Connection = null;
         }
 
+        /// <inheritdoc />
         public async Task BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, CancellationToken cancellationToken = default)
         {
             if (Transaction != null) throw new InvalidOperationException("There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
@@ -70,6 +75,7 @@ namespace FP.UoW
             Transaction = newTransaction;
         }
 
+        /// <inheritdoc />
         public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (Transaction is null) throw new InvalidOperationException("You must begin a transaction before committing it");
@@ -87,6 +93,7 @@ namespace FP.UoW
             Transaction = null;
         }
 
+        /// <inheritdoc />
         public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (Transaction is null) throw new InvalidOperationException("You must begin a transaction before rolling it back");

@@ -3,7 +3,7 @@
 namespace FP.UoW
 {
     /// <summary>
-    /// A database session data. Contains the current IDbConnection and IDbTransaction in use
+    /// A database session. Contains the current <see cref="DbConnection"/> and <see cref="DbTransaction" /> in use
     /// </summary>
     public interface IDatabaseSession
     {

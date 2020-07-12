@@ -6,10 +6,10 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds an Unit of Work to the <see cref="IServiceCollection"/> specified, optionally using the <see cref="ServiceLifetime"/> provided.
-        /// By default the Unit of Work will use a <see cref="ServiceLifetime.Scoped"/> lifetime.
+        /// Adds an Unit of Work to the <see cref="IServiceCollection"/> specified.
+        /// The Unit of Work will use a <see cref="ServiceLifetime.Scoped"/> lifetime (one per request).
         /// </summary>
-        public static IServiceCollection AddUoW<TDatabaseConnectionFactory>(this IServiceCollection services, string connectionString, ServiceLifetime uowLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddUoW<TDatabaseConnectionFactory>(this IServiceCollection services, string connectionString)
             where TDatabaseConnectionFactory : class, IDatabaseConnectionFactory
         {
             if (services is null) throw new ArgumentNullException(nameof(services));
@@ -19,24 +19,13 @@ namespace Microsoft.Extensions.DependencyInjection
             var databaseConnectionString = DatabaseConnectionString.From(connectionString);
 
             services.AddSingleton(databaseConnectionString);
-            services.AddSingleton<IDatabaseConnectionFactory, TDatabaseConnectionFactory>();
 
-            static object ResolveUnitOfWork(IServiceProvider serviceProvider)
-            {
-                return serviceProvider.GetRequiredService<UnitOfWork>();
-            }
+            services.AddTransient<IDatabaseConnectionFactory, TDatabaseConnectionFactory>();
 
-            var unitOfWorkServiceDescriptor = new ServiceDescriptor(typeof(UnitOfWork), typeof(UnitOfWork), uowLifetime);
+            services.AddScoped<UnitOfWork>();
 
-            //ServiceLifetime is "meaningless" here because we always forward resolution to Unit of Work which has its own lifetime
-            //We can safely use Transient here because the actual lifetime will be the one specified by the parameter uowLifetime
-
-            var databaseUnitOfWorkServiceDescriptor = new ServiceDescriptor(typeof(IDatabaseUnitOfWork), ResolveUnitOfWork, ServiceLifetime.Transient);
-            var databaseSessionServiceDescriptor = new ServiceDescriptor(typeof(IDatabaseSession), ResolveUnitOfWork, ServiceLifetime.Transient);
-
-            services.Add(unitOfWorkServiceDescriptor);
-            services.Add(databaseUnitOfWorkServiceDescriptor);
-            services.Add(databaseSessionServiceDescriptor);
+            services.AddScoped<IDatabaseUnitOfWork>(sp => sp.GetRequiredService<UnitOfWork>());
+            services.AddScoped<IDatabaseSession>(sp => sp.GetRequiredService<UnitOfWork>());
 
             return services;
         }

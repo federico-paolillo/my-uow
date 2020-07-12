@@ -35,4 +35,10 @@
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>FP.UoW.Factories.Autofac</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>

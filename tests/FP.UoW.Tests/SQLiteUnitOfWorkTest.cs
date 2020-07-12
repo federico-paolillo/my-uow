@@ -75,7 +75,7 @@ namespace FP.UoW.Tests
             await unitOfWork.CommitTransactionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            //..then reads the row, changes it and rolls back the changes
+            //...then reads the row...
 
             await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
@@ -86,6 +86,8 @@ namespace FP.UoW.Tests
                  .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.That(testModelFromDatabase.Id, Is.EqualTo(testModel.Id));
+
+            //...makes a change and rollbacks it
 
             await unitOfWork.Connection.ExecuteAsync(@"
                 UPDATE TestModels

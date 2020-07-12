@@ -4,14 +4,20 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSqlUoW(this IServiceCollection services, string connectionString, ServiceLifetime uowLifetime = ServiceLifetime.Scoped)
+        /// <summary>
+        /// Add Microsoft SQL Server specific types for the Unit of Work
+        /// </summary>
+        public static IServiceCollection AddSqlUoW(this IServiceCollection services, string connectionString)
         {
-            return services.AddUoW<SqlConnectionFactory>(connectionString, uowLifetime);
+            return services.AddUoW<SqlConnectionFactory>(connectionString);
         }
 
-        public static IServiceCollection AddSQLiteUoW(this IServiceCollection services, string connectionString, ServiceLifetime uowLifetime = ServiceLifetime.Scoped)
+        /// <summary>
+        /// Add Microsoft SQLite specific types for the Unit of Work
+        /// </summary>
+        public static IServiceCollection AddSQLiteUoW(this IServiceCollection services, string connectionString)
         {
-            return services.AddUoW<SQLiteConnectionFactory>(connectionString, uowLifetime);
+            return services.AddUoW<SQLiteConnectionFactory>(connectionString);
         }
     }
 }

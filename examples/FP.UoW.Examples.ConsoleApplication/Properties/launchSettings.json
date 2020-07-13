@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FP.UoW.Examples.ConsoleApplication": {
+      "commandName": "Project",
+      "commandLineArgs": "list"
+    }
+  }
+}

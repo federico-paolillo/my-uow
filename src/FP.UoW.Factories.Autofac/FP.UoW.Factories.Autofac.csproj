@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\FP.UoW.Autofac\FP.UoW.Autofac.csproj" />
-    <ProjectReference Include="..\src\FP.UoW.Factories\FP.UoW.Factories.csproj" />
+    <ProjectReference Include="..\FP.UoW.Autofac\FP.UoW.Autofac.csproj" />
+    <ProjectReference Include="..\FP.UoW.Factories\FP.UoW.Factories.csproj" />
   </ItemGroup>
 
 </Project>

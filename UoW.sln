@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{9B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1E6E053C-9938-48CB-ABE3-3C5E4782A302}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Factories.Autofac", "FP.UoW.Factories.Autofac\FP.UoW.Factories.Autofac.csproj", "{584FF8B3-73F7-4EFF-8841-BE2C22639602}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Factories.Autofac", "src\FP.UoW.Factories.Autofac\FP.UoW.Factories.Autofac.csproj", "{584FF8B3-73F7-4EFF-8841-BE2C22639602}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

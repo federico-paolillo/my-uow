@@ -79,6 +79,9 @@ finally
 }
 ```
 
+The repositories, instead, should use the `IDatabaseSession` to access the current connection and transaction.  
+In the method below, we can see how the repository uses the connection and transaction to perform its work but DOES NOT in any way attempt to influence the connection and transaction.  
+
 ```csharp
 var query = @"
     INSERT INTO Things(Column_One, Column_Two, Column_Three)
@@ -89,10 +92,7 @@ await databaseSession.Connection.ExecuteAsync(query, param: thing, transaction: 
     .ConfigureAwait(continueOnCapturedContext: false);
 ```
 
-The repositories, instead, should use the `IDatabaseSession` to access the current connection and transaction.  
-In the method below we can see how the repository uses the connection and transaction to perform its work but DOES NOT in any way attempt to influence the connection and transaction.  
-
-Refer to `src/examples/FP.UoW.Examples.ConsoleApplication` for the complete source code of an example using the Unit of Work.  
+To have a better look at the whole picture refer to `src/examples/FP.UoW.Examples.ConsoleApplication` for the complete example.
 You can run the example with `list` switch to see all the entries saved in the database.  
 Use `insert --count <number>` to add random `<number>` records to the database.  
 The example will create a file called `fp-uow-example.db` next to the executable.  

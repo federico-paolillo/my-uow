@@ -36,6 +36,10 @@ namespace FP.UoW.Examples.ConsoleApplication.Services
                 await unitOfWork.BeginTransactionAsync(cancellationToken)
                     .ConfigureAwait(continueOnCapturedContext: false);
 
+                //Creates the database table in case they don't exist, so that we have database file to work with
+                await thingsRepository.EnsureTableCreatedAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+
                 for (int i = 0; i < count; i++)
                 {
                     var thing = new Thing

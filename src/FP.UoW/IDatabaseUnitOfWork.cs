@@ -23,11 +23,10 @@ namespace FP.UoW
         Task CloseConnectionAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Begin a transaction using the open connection with the <see cref="IsolationLevel"/> specified.
+        /// Begin a transaction using the open connection.
         /// </summary>
-        /// <param name="isolationLevel">Specifies the transaction locking behavior for the transaction</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the operation.</param>
-        Task BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, CancellationToken cancellationToken = default);
+        Task BeginTransactionAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Rollsback the current transaction, removing any changes from the database

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,7 +60,7 @@ namespace FP.UoW
         }
 
         /// <inheritdoc />
-        public async Task BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, CancellationToken cancellationToken = default)
+        public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (Transaction != null) throw new InvalidOperationException("There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
 
@@ -69,7 +68,7 @@ namespace FP.UoW
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var newTransaction = await Connection.BeginTransactionAsync(isolationLevel, cancellationToken)
+            var newTransaction = await Connection.BeginTransactionAsync(cancellationToken)
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             Transaction = newTransaction;

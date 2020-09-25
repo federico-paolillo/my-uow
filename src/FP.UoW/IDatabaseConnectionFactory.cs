@@ -9,6 +9,6 @@ namespace FP.UoW
     /// </summary>
     public interface IDatabaseConnectionFactory
     {
-        Task<DbConnection> MakeDatabaseConnectionAsync(CancellationToken cancellationToken = default);
+        Task<DbConnection> MakeNewAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FP.UoW.SQLite;
+using System;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.Threading;
@@ -9,16 +10,16 @@ namespace FP.UoW.Factories
     /// <summary>
     /// Creates database connections for a SQLite database
     /// </summary>
-    internal sealed class SQLiteConnectionFactory : IDatabaseConnectionFactory
+    internal sealed class SQLiteDatabaseConnectionFactory : IDatabaseConnectionFactory
     {
-        private readonly DatabaseConnectionString connectionString;
+        private readonly SQLiteDatabaseConnectionString connectionString = null;
 
-        public SQLiteConnectionFactory(DatabaseConnectionString connectionString)
+        public SQLiteDatabaseConnectionFactory(SQLiteDatabaseConnectionString connectionString)
         {
             this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        public Task<DbConnection> MakeDatabaseConnectionAsync(CancellationToken cancellationToken = default)
+        public Task<DbConnection> MakeNewAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

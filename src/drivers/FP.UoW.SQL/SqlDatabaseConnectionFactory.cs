@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FP.UoW.Sql;
+using System;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Threading;
@@ -9,16 +10,16 @@ namespace FP.UoW.Factories
     /// <summary>
     /// Creates database connections for MSSQL database
     /// </summary>
-    internal sealed class SqlConnectionFactory : IDatabaseConnectionFactory
+    internal sealed class SqlDatabaseConnectionFactory : IDatabaseConnectionFactory
     {
-        private readonly DatabaseConnectionString connectionString;
+        private readonly SqlDatabaseConnectionString connectionString = null;
 
-        public SqlConnectionFactory(DatabaseConnectionString connectionString)
+        public SqlDatabaseConnectionFactory(SqlDatabaseConnectionString connectionString)
         {
             this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        public Task<DbConnection> MakeDatabaseConnectionAsync(CancellationToken cancellationToken = default)
+        public Task<DbConnection> MakeNewAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

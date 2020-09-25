@@ -15,7 +15,8 @@ namespace FP.UoW.Examples.ConsoleApplication
         {
             //Here we add the SQLite UnitOfWork implementation the ServiceCollection
             var serviceCollection = new ServiceCollection()
-                .AddSQLiteUoW(CONNECTION_STRING);
+                .AddUoW()
+                .ForSQLite(CONNECTION_STRING);
 
             //We register some services and repositories that will be used in the example to access the db
             serviceCollection.AddTransient<ThingsService>();

@@ -10,7 +10,7 @@ namespace FP.UoW
     /// </summary>
     internal sealed class UnitOfWork : IDatabaseUnitOfWork, IDatabaseSession, IDisposable
     {
-        private readonly IDatabaseConnectionFactory connectionFactory = null;
+        private readonly IDatabaseConnectionFactory connectionFactory;
 
         /// <inheritdoc />
         public DbConnection Connection { get; private set; }
@@ -30,7 +30,7 @@ namespace FP.UoW
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var newConnection = await connectionFactory.MakeDatabaseConnectionAsync(cancellationToken)
+            var newConnection = await connectionFactory.MakeNewAsync(cancellationToken)
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             if (newConnection is null) throw new InvalidOperationException("No DbConnection instance was created, implementation returned null");

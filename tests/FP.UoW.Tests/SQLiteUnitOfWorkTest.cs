@@ -34,7 +34,8 @@ namespace FP.UoW.Tests
             var databaseConnectionString = $"Data Source = {databaseFileName}";
 
             serviceProvider = new ServiceCollection()
-                .AddSQLiteUoW(databaseConnectionString)
+                .AddUoW()
+                .ForSQLite(databaseConnectionString)
                 .BuildServiceProvider();
 
             serviceScope = serviceProvider.CreateScope();

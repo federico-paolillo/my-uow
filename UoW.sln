@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW", "src\FP.UoW\FP.UoW.csproj", "{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Autofac", "src\FP.UoW.Autofac\FP.UoW.Autofac.csproj", "{E3B91E0B-4A13-43EA-8A8B-79F9B846A1B0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{599337C8-B377-405C-BAA1-6440C8CB2FCA}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
@@ -17,17 +15,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{599337C8
 		UoW.v3.ncrunchsolution.user = UoW.v3.ncrunchsolution.user
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Factories", "src\FP.UoW.Factories\FP.UoW.Factories.csproj", "{BC969773-89DA-4CB5-BA36-63E03C7FA613}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite", "src\drivers\FP.UoW.SQLite\FP.UoW.SQLite.csproj", "{BC969773-89DA-4CB5-BA36-63E03C7FA613}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Tests", "tests\FP.UoW.Tests\FP.UoW.Tests.csproj", "{02FDF4BF-3851-4F10-B9C7-926C6C782B9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Examples.ConsoleApplication", "examples\FP.UoW.Examples.ConsoleApplication\FP.UoW.Examples.ConsoleApplication.csproj", "{10EBAA5F-0557-4057-BBEE-83200D180FFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Examples.ConsoleApplication", "examples\FP.UoW.Examples.ConsoleApplication\FP.UoW.Examples.ConsoleApplication.csproj", "{10EBAA5F-0557-4057-BBEE-83200D180FFC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{9B341B44-8E8B-4CDE-9652-95B9425DE610}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1E6E053C-9938-48CB-ABE3-3C5E4782A302}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Factories.Autofac", "src\FP.UoW.Factories.Autofac\FP.UoW.Factories.Autofac.csproj", "{584FF8B3-73F7-4EFF-8841-BE2C22639602}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Sql", "src\drivers\FP.UoW.SQL\FP.UoW.Sql.csproj", "{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Autofac", "Autofac", "{C1B29FCE-D1D1-4E99-AD17-295C5A924784}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{E24173A1-162C-4345-9911-5BA7550F46D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +41,6 @@ Global
 		{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3B91E0B-4A13-43EA-8A8B-79F9B846A1B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3B91E0B-4A13-43EA-8A8B-79F9B846A1B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3B91E0B-4A13-43EA-8A8B-79F9B846A1B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3B91E0B-4A13-43EA-8A8B-79F9B846A1B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC969773-89DA-4CB5-BA36-63E03C7FA613}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC969773-89DA-4CB5-BA36-63E03C7FA613}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC969773-89DA-4CB5-BA36-63E03C7FA613}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,17 +53,20 @@ Global
 		{10EBAA5F-0557-4057-BBEE-83200D180FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10EBAA5F-0557-4057-BBEE-83200D180FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10EBAA5F-0557-4057-BBEE-83200D180FFC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{584FF8B3-73F7-4EFF-8841-BE2C22639602}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{584FF8B3-73F7-4EFF-8841-BE2C22639602}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{584FF8B3-73F7-4EFF-8841-BE2C22639602}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{584FF8B3-73F7-4EFF-8841-BE2C22639602}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{BC969773-89DA-4CB5-BA36-63E03C7FA613} = {E24173A1-162C-4345-9911-5BA7550F46D9}
 		{02FDF4BF-3851-4F10-B9C7-926C6C782B9A} = {1E6E053C-9938-48CB-ABE3-3C5E4782A302}
 		{10EBAA5F-0557-4057-BBEE-83200D180FFC} = {9B341B44-8E8B-4CDE-9652-95B9425DE610}
+		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442} = {E24173A1-162C-4345-9911-5BA7550F46D9}
+		{C1B29FCE-D1D1-4E99-AD17-295C5A924784} = {E24173A1-162C-4345-9911-5BA7550F46D9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06C47C78-33AB-4295-9B8C-BCF6C134F17E}

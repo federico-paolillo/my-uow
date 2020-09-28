@@ -4,20 +4,22 @@ using System.Threading.Tasks;
 
 namespace FP.UoW
 {
+    /// <inheritdoc/>
     internal sealed class UnitOfWorkFactory : IUnitOfWorkFactory
     {
-        private IDatabaseConnectionFactory databaseConnectionFactory;
+        private readonly IDatabaseConnectionFactory databaseConnectionFactory;
 
         public UnitOfWorkFactory(IDatabaseConnectionFactory databaseConnectionFactory)
         {
             this.databaseConnectionFactory = databaseConnectionFactory ?? throw new ArgumentNullException(nameof(databaseConnectionFactory));
         }
 
-        public Task<IDatabaseUnitOfWork> MakeNewAsync(CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        public Task<IUnitOfWork> MakeNewAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            IDatabaseUnitOfWork uow = new UnitOfWork(databaseConnectionFactory);
+            IUnitOfWork uow = new UnitOfWork(databaseConnectionFactory);
 
             return Task.FromResult(uow);
         }

@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <summary>
-    /// Builds new instances of <see cref="IDatabaseUnitOfWork"/> to consume
+    /// Builds new instances of <see cref="IUnitOfWork"/> not bound to any scope
     /// </summary>
-    /// <remarks>This interface is required if you want to manually manage the <see cref="IDatabaseUnitOfWork"/> lifetime.</remarks>
     public interface IUnitOfWorkFactory
     {
-        Task<IDatabaseUnitOfWork> MakeNewAsync(CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Makes a new <see cref="IUnitOfWork"/> not bound to any scope
+        /// </summary>
+        Task<IUnitOfWork> MakeNewAsync(CancellationToken cancellationToken = default);
     }
 }

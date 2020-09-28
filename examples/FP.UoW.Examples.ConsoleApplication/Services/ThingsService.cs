@@ -12,11 +12,11 @@ namespace FP.UoW.Examples.ConsoleApplication.Services
     /// </summary>
     public sealed class ThingsService
     {
-        private readonly IDatabaseUnitOfWork unitOfWork = null;
+        private readonly IUnitOfWork unitOfWork = null;
         private readonly ThingsRepository thingsRepository = null;
 
         //We inject the IDatabaseUnitOfWork and the Repository. Usually you would use an interface for the repository, but to keep the example simple we just use the class
-        public ThingsService(IDatabaseUnitOfWork unitOfWork, ThingsRepository thingsRepository)
+        public ThingsService(IUnitOfWork unitOfWork, ThingsRepository thingsRepository)
         {
             this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             this.thingsRepository = thingsRepository ?? throw new ArgumentNullException(nameof(thingsRepository));
@@ -40,7 +40,7 @@ namespace FP.UoW.Examples.ConsoleApplication.Services
                 await thingsRepository.EnsureTableCreatedAsync()
                     .ConfigureAwait(continueOnCapturedContext: false);
 
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
                     var thing = new Thing
                     {
@@ -102,7 +102,7 @@ namespace FP.UoW.Examples.ConsoleApplication.Services
             }
             finally
             {
-                await unitOfWork.CloseConnectionAsync()
+                await unitOfWork.CloseConnectionAsync(cancellationToken)
                     .ConfigureAwait(continueOnCapturedContext: false);
             }
         }

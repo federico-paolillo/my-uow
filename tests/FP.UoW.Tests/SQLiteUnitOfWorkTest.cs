@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace FP.UoW.Tests
@@ -24,7 +25,7 @@ namespace FP.UoW.Tests
 
         private IServiceScope serviceScope = null;
 
-        private IDatabaseUnitOfWork unitOfWork = null;
+        private IUnitOfWork unitOfWork = null;
 
         [SetUp]
         public void Setup()
@@ -40,68 +41,57 @@ namespace FP.UoW.Tests
 
             serviceScope = serviceProvider.CreateScope();
 
-            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IDatabaseUnitOfWork>();
+            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         }
 
         [Test]
-        public async Task Creates_a_table_and_inserts_a_row_then_reads_the_row_changes_it_and_rolls_back_the_changes()
+        public async Task Reads_and_writes_from_SQLite()
         {
-            //Creates a table and inserts a row...
-
-            await unitOfWork.OpenConnectionAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
-
             await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
+            await CreateTableAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await InsertRowAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await ReadRowAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await unitOfWork.CommitTransactionAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+        }
+
+        private async Task CreateTableAsync()
+        {
             await unitOfWork.Connection.ExecuteAsync(@"
                 CREATE TABLE TestModels(
                     Id TEXT PRIMARY KEY,
                     ColumnOne TEXT NOT NULL,
                     ColumnTwo TEXT NOT NULL
                 );", transaction: unitOfWork.Transaction)
-                .ConfigureAwait(continueOnCapturedContext: false);
-
-            var testModel = new TestModel { Id = Guid.NewGuid().ToString(), ColumnOne = "Value #1", ColumnTwo = "Value #2" };
-
-            await unitOfWork.Connection.ExecuteAsync(@"
-                INSERT INTO TestModels(Id, ColumnOne, ColumnTwo)
-                VALUES (
-                    @Id, 
-                    @ColumnOne, 
-                    @ColumnTwo
-                );", param: testModel, transaction: unitOfWork.Transaction)
-                .ConfigureAwait(continueOnCapturedContext: false);
-
-            await unitOfWork.CommitTransactionAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
-
-            //...then reads the row...
-
-            await unitOfWork.BeginTransactionAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
-
-            var testModelFromDatabase = await unitOfWork.Connection.QueryFirstOrDefaultAsync<TestModel>(@"
-                SELECT * FROM TestModels
-                ;", param: testModel, transaction: unitOfWork.Transaction)
-                 .ConfigureAwait(continueOnCapturedContext: false);
-
-            Assert.That(testModelFromDatabase.Id, Is.EqualTo(testModel.Id));
-
-            //...makes a change and rollbacks it
-
-            await unitOfWork.Connection.ExecuteAsync(@"
-                UPDATE TestModels
-                SET ColumnOne = 'Something else'
-                WHERE Id = @Id
-                ;", param: new { testModel.Id }, transaction: unitOfWork.Transaction)
             .ConfigureAwait(continueOnCapturedContext: false);
+        }
 
-            await unitOfWork.RollbackTransactionAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+        private async Task InsertRowAsync()
+        {
+            await unitOfWork.Connection.ExecuteAsync(@"
+                    INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES('Pippo', 'Pluto', 'Garbage');
+                ", transaction: unitOfWork.Transaction)
+            .ConfigureAwait(continueOnCapturedContext: false);
+        }
 
-            await unitOfWork.CloseConnectionAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+        private async Task ReadRowAsync()
+        {
+            var testModel = await unitOfWork.Connection.QuerySingleOrDefaultAsync<TestModel>(@"
+                    SELECT * FROM TestModels WHERE Id = 'Pippo';
+                ", transaction: unitOfWork.Transaction)
+            .ConfigureAwait(continueOnCapturedContext: false);
+            
+            Assert.That(testModel.Id, Is.EqualTo("Pippo"));
+            Assert.That(testModel.ColumnOne, Is.EqualTo("Pluto"));
+            Assert.That(testModel.ColumnTwo, Is.EqualTo("Garbage"));
         }
 
         [TearDown]

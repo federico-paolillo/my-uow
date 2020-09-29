@@ -18,6 +18,9 @@ namespace FP.UoW.Examples.ConsoleApplication.Repositories
 
         public async Task<IReadOnlyList<Thing>> GetAllAsync()
         {
+            await EnsureTableCreatedAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+            
             var query = @"
                 SELECT * FROM Things;
             ";
@@ -35,6 +38,9 @@ namespace FP.UoW.Examples.ConsoleApplication.Repositories
         {
             if (thing is null) throw new ArgumentNullException(nameof(thing));
 
+            await EnsureTableCreatedAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+            
             var query = @"
                 INSERT INTO Things(Column_One, Column_Two, Column_Three)
                 VALUES(@Column_One, @Column_Two, @Column_Three);
@@ -47,7 +53,7 @@ namespace FP.UoW.Examples.ConsoleApplication.Repositories
         /// <summary>
         /// Creates the database tables if needed, not very important for the example.
         /// </summary>
-        public async Task EnsureTableCreatedAsync()
+        private async Task EnsureTableCreatedAsync()
         {
             var query = @"
                 CREATE TABLE IF NOT EXISTS Things (

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace FP.UoW.Examples.ConsoleApplication
+namespace FP.UoW.Tests
 {
     public static class Randomness
     {
@@ -13,7 +13,7 @@ namespace FP.UoW.Examples.ConsoleApplication
 
         private const string ALPHABET = "ABCDEFGHILMNOPQRSTUVWXYZabcdefghilmnopqrstuvwxyz01234567890";
 
-        private static readonly Random rng = new Random();
+        private static readonly Random rng = new Random(0xFEDE);
 
         public static string Text()
         {

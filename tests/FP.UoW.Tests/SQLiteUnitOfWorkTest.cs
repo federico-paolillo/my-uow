@@ -8,15 +8,6 @@ using System.Threading.Tasks;
 
 namespace FP.UoW.Tests
 {
-    public sealed class TestModel
-    {
-        public string Id { get; set; }
-
-        public string ColumnOne { get; set; }
-
-        public string ColumnTwo { get; set; }
-    }
-
     public class SQLiteUnitOfWorkTest
     {
         private string databaseFileName = null;
@@ -26,6 +17,8 @@ namespace FP.UoW.Tests
         private IServiceScope serviceScope = null;
 
         private IUnitOfWork unitOfWork = null;
+
+        private TestModel randomModel = null;
 
         [SetUp]
         public void Setup()
@@ -42,6 +35,8 @@ namespace FP.UoW.Tests
             serviceScope = serviceProvider.CreateScope();
 
             unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+            randomModel = TestModel.Random();
         }
 
         [Test]
@@ -63,6 +58,15 @@ namespace FP.UoW.Tests
                 .ConfigureAwait(continueOnCapturedContext: false);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            serviceScope?.Dispose();
+            serviceProvider?.Dispose();
+
+            File.Delete(databaseFileName);
+        }
+
         private async Task CreateTableAsync()
         {
             await unitOfWork.Connection.ExecuteAsync(@"
@@ -71,36 +75,27 @@ namespace FP.UoW.Tests
                     ColumnOne TEXT NOT NULL,
                     ColumnTwo TEXT NOT NULL
                 );", transaction: unitOfWork.Transaction)
-            .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(continueOnCapturedContext: false);
         }
 
         private async Task InsertRowAsync()
         {
             await unitOfWork.Connection.ExecuteAsync(@"
-                    INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES('Pippo', 'Pluto', 'Garbage');
-                ", transaction: unitOfWork.Transaction)
-            .ConfigureAwait(continueOnCapturedContext: false);
+                    INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES(@Id, @ColumnOne, @ColumnTwo);
+                ", transaction: unitOfWork.Transaction, param: randomModel)
+                .ConfigureAwait(continueOnCapturedContext: false);
         }
 
         private async Task ReadRowAsync()
         {
             var testModel = await unitOfWork.Connection.QuerySingleOrDefaultAsync<TestModel>(@"
-                    SELECT * FROM TestModels WHERE Id = 'Pippo';
-                ", transaction: unitOfWork.Transaction)
-            .ConfigureAwait(continueOnCapturedContext: false);
-            
-            Assert.That(testModel.Id, Is.EqualTo("Pippo"));
-            Assert.That(testModel.ColumnOne, Is.EqualTo("Pluto"));
-            Assert.That(testModel.ColumnTwo, Is.EqualTo("Garbage"));
-        }
+                    SELECT * FROM TestModels WHERE Id = @Id';
+                ", transaction: unitOfWork.Transaction, param: randomModel)
+                .ConfigureAwait(continueOnCapturedContext: false);
 
-        [TearDown]
-        public void TearDown()
-        {
-            serviceScope?.Dispose();
-            serviceProvider?.Dispose();
-
-            File.Delete(databaseFileName);
+            Assert.That(testModel.Id, Is.EqualTo(randomModel.Id));
+            Assert.That(testModel.ColumnOne, Is.EqualTo(randomModel.ColumnOne));
+            Assert.That(testModel.ColumnTwo, Is.EqualTo(randomModel.ColumnTwo));
         }
     }
 }

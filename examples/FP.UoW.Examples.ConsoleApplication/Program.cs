@@ -27,9 +27,9 @@ namespace FP.UoW.Examples.ConsoleApplication
 
             //We setup the service provider and a new service provider scope
             //Consider a service provider scope roughly like a transaction for dependency injection
-            using var serviceProvider = serviceCollection.BuildServiceProvider();
+            await using var serviceProvider = serviceCollection.BuildServiceProvider();
             using var servicesScope = serviceProvider.CreateScope();
-
+            
             //Irrelevant, third party code to start up the application
             //Read ListCommand and InsertCommand for the next steps
             var application = new CliApplicationBuilder()

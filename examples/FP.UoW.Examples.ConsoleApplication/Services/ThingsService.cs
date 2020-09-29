@@ -28,16 +28,8 @@ namespace FP.UoW.Examples.ConsoleApplication.Services
 
             try
             {
-                //We open the connection, the service always handle the connection and transaction lifetime
-                await unitOfWork.OpenConnectionAsync(cancellationToken)
-                    .ConfigureAwait(continueOnCapturedContext: false);
-
-                //Then we start the transaction
+                //Begin the Transaction, this implicitly Opens the connection
                 await unitOfWork.BeginTransactionAsync(cancellationToken)
-                    .ConfigureAwait(continueOnCapturedContext: false);
-
-                //Creates the database table in case they don't exist, so that we have database file to work with
-                await thingsRepository.EnsureTableCreatedAsync()
                     .ConfigureAwait(continueOnCapturedContext: false);
 
                 for (var i = 0; i < count; i++)
@@ -49,29 +41,24 @@ namespace FP.UoW.Examples.ConsoleApplication.Services
                         Column_Three = Randomness.Text()
                     };
 
-                    //We do all our inserts
+                    //We do all our inserts for this Transaction...
                     await thingsRepository.InsertThingAsync(thing)
                         .ConfigureAwait(continueOnCapturedContext: false);
                 }
 
-                //And we complete the transaction
+                //...and we complete the transaction which implicitly closes the Connection
                 await unitOfWork.CommitTransactionAsync(cancellationToken)
                     .ConfigureAwait(continueOnCapturedContext: false);
             }
             catch
             {
-                //If something goes wrong (even a Cancellation) we rollback everything
+                //If something goes wrong we cancel the current transaction which implicitly closes the Connection
                 await unitOfWork.RollbackTransactionAsync(cancellationToken)
                     .ConfigureAwait(continueOnCapturedContext: false);
 
-                //Irrelevant, but, we rethrow the exception because we catch it only to rollback the transaction and not to handle the transaction itself
+                //Irrelevant, but, we rethrow the exception because we caught it only to rollback the transaction.
+                //The actual Exception will be handled elsewhere at an higher level
                 throw;
-            }
-            finally
-            {
-                //Always remember to close the connection
-                await unitOfWork.CloseConnectionAsync(cancellationToken)
-                    .ConfigureAwait(continueOnCapturedContext: false);
             }
         }
 
@@ -87,10 +74,6 @@ namespace FP.UoW.Examples.ConsoleApplication.Services
 
             try
             {
-                //Creates the database table in case they don't exist, so that we have database file to work with
-                await thingsRepository.EnsureTableCreatedAsync()
-                    .ConfigureAwait(continueOnCapturedContext: false);
-
                 //We call the repository AFTER opening the connection, the repository does not manage the connection lifetime. 
                 //The repository will access the connection through the IDatabaseSession injected into it therefore the connection must be open to use it.
                 var entities = await thingsRepository.GetAllAsync()

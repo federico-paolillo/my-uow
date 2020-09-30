@@ -4,19 +4,15 @@
         <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\FP.UoW\FP.UoW.csproj" />
-    </ItemGroup>
-
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DefineConstants>DEBUG</DefineConstants>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <CodeAnalysisRuleSet>../../UoW.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>../../../UoW.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <CodeAnalysisRuleSet>../../UoW.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>../../../UoW.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,6 +24,11 @@
 
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
 
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj" />
+      <ProjectReference Include="..\FP.UoW.SQLite\FP.UoW.SQLite.csproj" />
     </ItemGroup>
 
 </Project>

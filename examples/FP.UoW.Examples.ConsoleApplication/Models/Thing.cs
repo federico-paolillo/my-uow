@@ -2,10 +2,10 @@
 {
     public sealed class Thing
     {
-        public int Column_One { get; set; }
+        public int ColumnOne { get; set; }
 
-        public int Column_Two { get; set; }
+        public int ColumnTwo { get; set; }
 
-        public string Column_Three { get; set; }
+        public string ColumnThree { get; set; }
     }
 }

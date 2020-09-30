@@ -13,17 +13,17 @@ namespace FP.UoW.Examples.ConsoleApplication
 
         private const string ALPHABET = "ABCDEFGHILMNOPQRSTUVWXYZabcdefghilmnopqrstuvwxyz01234567890";
 
-        private static readonly Random rng = new Random();
+        private static readonly Random RNG = new Random();
 
         public static string Text()
         {
-            var length = rng.Next(MIN_STRING_LENGTH, MAX_STRING_LENGTH);
+            var length = RNG.Next(MIN_STRING_LENGTH, MAX_STRING_LENGTH);
 
             var sb = new StringBuilder(length);
 
             for (int i = 0; i < length; i++)
             {
-                var rngIndex = rng.Next(0, ALPHABET.Length);
+                var rngIndex = RNG.Next(0, ALPHABET.Length);
 
                 sb.Append(ALPHABET[rngIndex]);
             }
@@ -33,7 +33,7 @@ namespace FP.UoW.Examples.ConsoleApplication
 
         public static int Number()
         {
-            return rng.Next(MIN_NUMBER, MAX_NUMBER);
+            return RNG.Next(MIN_NUMBER, MAX_NUMBER);
         }
     }
 }

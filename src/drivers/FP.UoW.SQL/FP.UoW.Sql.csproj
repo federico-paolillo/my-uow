@@ -8,7 +8,6 @@
         <Product>FP.UoW</Product>
         <Description>
             My personal take on an Unit of Work implementation that I often use in Web applications and APIs.
-            This package contains factories for connection objects for MSSQL and SQLite.
         </Description>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -27,23 +26,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Data.SqlClient" Version="4.8.2"/>
-        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1"/>
-        <PackageReference Include="ValueOf" Version="1.0.17"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+        <PackageReference Include="ValueOf" Version="1.0.17" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ValueOf" Version="1.0.17"/>
+        <PackageReference Include="ValueOf" Version="1.0.17" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\FP.UoW\FP.UoW.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>FP.UoW.Sql.Autofac</_Parameter1>
-        </AssemblyAttribute>
+      <ProjectReference Include="..\..\FP.UoW\FP.UoW.csproj" />
     </ItemGroup>
 
 </Project>

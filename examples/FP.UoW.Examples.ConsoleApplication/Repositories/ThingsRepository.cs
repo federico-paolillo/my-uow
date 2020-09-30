@@ -1,15 +1,15 @@
-﻿using Dapper;
-using FP.UoW.Examples.ConsoleApplication.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using FP.UoW.Examples.ConsoleApplication.Models;
 
 namespace FP.UoW.Examples.ConsoleApplication.Repositories
 {
     public sealed class ThingsRepository
     {
-        private readonly IDatabaseSession databaseSession = null;
+        private readonly IDatabaseSession databaseSession;
 
         public ThingsRepository(IDatabaseSession databaseSession)
         {
@@ -19,8 +19,8 @@ namespace FP.UoW.Examples.ConsoleApplication.Repositories
         public async Task<IReadOnlyList<Thing>> GetAllAsync()
         {
             await EnsureTableCreatedAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
-            
+                .ConfigureAwait(false);
+
             var query = @"
                 SELECT * FROM Things;
             ";
@@ -28,8 +28,9 @@ namespace FP.UoW.Examples.ConsoleApplication.Repositories
             //We use the database session here to run our queries.
             //Passing the transaction is not needed for a readonly query and it will be null...
             //...although I find that it is better to always pass it so that you never forget.
-            var things = await databaseSession.Connection.QueryAsync<Thing>(query, transaction: databaseSession.Transaction)
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var things = await databaseSession.Connection
+                .QueryAsync<Thing>(query, transaction: databaseSession.Transaction)
+                .ConfigureAwait(false);
 
             return things.ToList();
         }
@@ -39,33 +40,33 @@ namespace FP.UoW.Examples.ConsoleApplication.Repositories
             if (thing is null) throw new ArgumentNullException(nameof(thing));
 
             await EnsureTableCreatedAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
-            
+                .ConfigureAwait(false);
+
             var query = @"
-                INSERT INTO Things(Column_One, Column_Two, Column_Three)
-                VALUES(@Column_One, @Column_Two, @Column_Three);
+                INSERT INTO Things(ColumnOne, ColumnTwo, ColumnThree)
+                VALUES(@ColumnOne, @ColumnTwo, @ColumnThree);
             ";
 
-            await databaseSession.Connection.ExecuteAsync(query, param: thing, transaction: databaseSession.Transaction)
-                .ConfigureAwait(continueOnCapturedContext: false);
+            await databaseSession.Connection.ExecuteAsync(query, thing, databaseSession.Transaction)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Creates the database tables if needed, not very important for the example.
+        ///     Creates the database tables if needed, not very important for the example.
         /// </summary>
         private async Task EnsureTableCreatedAsync()
         {
             var query = @"
                 CREATE TABLE IF NOT EXISTS Things (
 
-                    Column_One INT PRIMARY KEY,
-                    Column_Two INT NOT NULL,
-                    Column_Three TEXT NOT NULL
+                    ColumnOne INT PRIMARY KEY,
+                    ColumnTwo INT NOT NULL,
+                    ColumnThree TEXT NOT NULL
                 );
             ";
 
             await databaseSession.Connection.ExecuteAsync(query, transaction: databaseSession.Transaction)
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
         }
     }
 }

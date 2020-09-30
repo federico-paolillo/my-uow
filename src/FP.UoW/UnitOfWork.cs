@@ -92,10 +92,6 @@ namespace FP.UoW
             if (Transaction is null)
                 throw new InvalidOperationException("You must begin a transaction before committing it");
 
-            if (Connection is null)
-                throw new InvalidOperationException(
-                    "You must open a connection to the database before doing anything with transactions");
-
             cancellationToken.ThrowIfCancellationRequested();
 
             await Transaction.CommitAsync(cancellationToken)
@@ -115,10 +111,6 @@ namespace FP.UoW
         {
             if (Transaction is null)
                 throw new InvalidOperationException("You must begin a transaction before rolling it back");
-
-            if (Connection is null)
-                throw new InvalidOperationException(
-                    "You must open a connection to the database before before doing anything with transactions");
 
             cancellationToken.ThrowIfCancellationRequested();
 

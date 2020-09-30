@@ -1,18 +1,17 @@
-﻿using FP.UoW.Sql;
-using System;
+﻿using System;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FP.UoW.Factories
+namespace FP.UoW.Sql
 {
     /// <summary>
-    /// Creates database connections for MSSQL database
+    ///     Creates database connections for MSSQL database
     /// </summary>
-    internal sealed class SqlDatabaseConnectionFactory : IDatabaseConnectionFactory
+    public sealed class SqlDatabaseConnectionFactory : IDatabaseConnectionFactory
     {
-        private readonly SqlDatabaseConnectionString connectionString = null;
+        private readonly SqlDatabaseConnectionString connectionString;
 
         public SqlDatabaseConnectionFactory(SqlDatabaseConnectionString connectionString)
         {

@@ -2,7 +2,7 @@
 
 namespace FP.UoW.SQLite
 {
-    internal sealed class SQLiteDatabaseConnectionString : ValueOf<string, SQLiteDatabaseConnectionString>
+    public sealed class SQLiteDatabaseConnectionString : ValueOf<string, SQLiteDatabaseConnectionString>
     {
     }
 }

@@ -1,20 +1,21 @@
-﻿using FP.UoW;
-using FP.UoW.Factories;
-using FP.UoW.SQLite;
-using System;
+﻿using System;
+using FP.UoW.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace FP.UoW.SQLite.DependencyInjection
 {
     public static class UoWServiceBuilderExtensions
     {
         /// <summary>
-        /// Add SQLite specific types for the Unit of Work
+        ///     Add SQLite specific types for the Unit of Work
         /// </summary>
-        public static IServiceCollection ForSQLite(this IUnitOfWorkServiceBuilder builder, string connectionString)
+        public static IServiceCollection ForSQLite(this UnitOfWorkServiceBuilder builder, string connectionString)
         {
             if (builder is null) throw new ArgumentNullException(nameof(builder));
 
-            if (string.IsNullOrEmpty(connectionString)) throw new ArgumentException($"'{nameof(connectionString)}' cannot be null or empty", nameof(connectionString));
+            if (string.IsNullOrEmpty(connectionString))
+                throw new ArgumentException($"'{nameof(connectionString)}' cannot be null or empty",
+                    nameof(connectionString));
 
             var sqlConnectionString = SQLiteDatabaseConnectionString.From(connectionString);
 

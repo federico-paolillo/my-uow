@@ -1,18 +1,17 @@
-﻿using FP.UoW.SQLite;
-using System;
+﻿using System;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FP.UoW.Factories
+namespace FP.UoW.SQLite
 {
     /// <summary>
-    /// Creates database connections for a SQLite database
+    ///     Creates database connections for a SQLite database
     /// </summary>
-    internal sealed class SQLiteDatabaseConnectionFactory : IDatabaseConnectionFactory
+    public sealed class SQLiteDatabaseConnectionFactory : IDatabaseConnectionFactory
     {
-        private readonly SQLiteDatabaseConnectionString connectionString = null;
+        private readonly SQLiteDatabaseConnectionString connectionString;
 
         public SQLiteDatabaseConnectionFactory(SQLiteDatabaseConnectionString connectionString)
         {

@@ -3,12 +3,10 @@ using System;
 
 namespace FP.UoW.DependencyInjection
 {
-    /// <inheritdoc/>
-    internal sealed class UnitOfWorkServiceBuilder : IUnitOfWorkServiceBuilder
+    public sealed class UnitOfWorkServiceBuilder
     {
-        public IServiceCollection ServiceCollection { get; private set; }
+        public IServiceCollection ServiceCollection { get; }
 
-        /// <inheritdoc/>
         internal UnitOfWorkServiceBuilder(IServiceCollection serviceCollection)
         {
             ServiceCollection = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));

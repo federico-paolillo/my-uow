@@ -4,6 +4,8 @@ using FP.UoW.Examples.ConsoleApplication.Repositories;
 using FP.UoW.Examples.ConsoleApplication.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using FP.UoW.DependencyInjection;
+using FP.UoW.SQLite.DependencyInjection;
 
 namespace FP.UoW.Examples.ConsoleApplication
 {

@@ -15,11 +15,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\drivers\FP.UoW.SQLite.DependencyInjection\FP.UoW.SQLite.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\src\drivers\FP.UoW.SQLite\FP.UoW.SQLite.csproj" />
+    <ProjectReference Include="..\..\src\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\src\FP.UoW\FP.UoW.csproj" />
   </ItemGroup>
 

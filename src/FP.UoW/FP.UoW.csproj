@@ -33,16 +33,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>FP.UoW.Autofac</_Parameter1>
-    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

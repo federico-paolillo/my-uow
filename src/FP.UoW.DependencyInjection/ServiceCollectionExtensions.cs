@@ -1,13 +1,14 @@
 ﻿using System;
 using FP.UoW;
+using FP.UoW.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds an Unit of Work to the <see cref="IServiceCollection" /> specified
-        /// The Unit of Work will use a <see cref="ServiceLifetime.Scoped" /> lifetime
+        ///     Adds an Unit of Work to the <see cref="IServiceCollection" /> specified
+        ///     The Unit of Work will use a <see cref="ServiceLifetime.Scoped" /> lifetime
         /// </summary>
         public static IUnitOfWorkServiceBuilder AddUoW(this IServiceCollection services)
         {

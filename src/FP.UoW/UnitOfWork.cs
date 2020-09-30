@@ -8,7 +8,7 @@ namespace FP.UoW
     /// <summary>
     /// Implementation of an Unit of Work
     /// </summary>
-    internal sealed class UnitOfWork : IUnitOfWork, IDatabaseSession, IDisposable
+    public sealed class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly IDatabaseConnectionFactory connectionFactory;
 

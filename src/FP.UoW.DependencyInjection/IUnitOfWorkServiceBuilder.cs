@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace FP.UoW
+namespace FP.UoW.DependencyInjection
 {
     /// <summary>
     /// Exposes extension methods to further configure the Unit Of Work library with Dependency Injection

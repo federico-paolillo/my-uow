@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <inheritdoc/>
-    internal sealed class UnitOfWorkFactory : IUnitOfWorkFactory
+    public sealed class UnitOfWorkFactory : IUnitOfWorkFactory
     {
         private readonly IDatabaseConnectionFactory databaseConnectionFactory;
 

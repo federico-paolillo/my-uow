@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace FP.UoW
+namespace FP.UoW.DependencyInjection
 {
     /// <inheritdoc/>
     internal sealed class UnitOfWorkServiceBuilder : IUnitOfWorkServiceBuilder

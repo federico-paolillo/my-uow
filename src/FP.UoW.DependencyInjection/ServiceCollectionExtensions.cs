@@ -6,14 +6,12 @@ namespace FP.UoW.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds an Unit of Work to the <see cref="IServiceCollection" /> specified
-        /// The Unit of Work will use a <see cref="ServiceLifetime.Scoped" /> lifetime
+        ///     Adds an Unit of Work to the <see cref="IServiceCollection" /> specified
+        ///     The Unit of Work will use a <see cref="ServiceLifetime.Scoped" /> lifetime
         /// </summary>
         public static UnitOfWorkServiceBuilder AddUoW(this IServiceCollection services)
         {
             if (services is null) throw new ArgumentNullException(nameof(services));
-
-            services.AddTransient<IUnitOfWorkFactory, UnitOfWorkFactory>();
 
             services.AddScoped<UnitOfWork>();
 

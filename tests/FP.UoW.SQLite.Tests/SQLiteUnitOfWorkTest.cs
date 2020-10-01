@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using Dapper;
 using FP.UoW.DependencyInjection;
 using FP.UoW.SQLite.DependencyInjection;
+using FP.UoW.SQLite.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace FP.UoW.Tests
+namespace FP.UoW.SQLite.Tests
 {
-    public class SQLiteUnitOfWorkTest
+    public sealed class SQLiteUnitOfWorkTest
     {
         private string databaseFileName;
 

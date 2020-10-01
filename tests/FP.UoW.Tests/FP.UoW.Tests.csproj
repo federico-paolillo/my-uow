@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
+    <PackageReference Include="Moq" Version="4.14.6" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
       <PrivateAssets>all</PrivateAssets>
@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\drivers\FP.UoW.SQLite.DependencyInjection\FP.UoW.SQLite.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\src\drivers\FP.UoW.SQLite\FP.UoW.SQLite.csproj" />
     <ProjectReference Include="..\..\src\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\src\FP.UoW\FP.UoW.csproj" />

@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Sql.DependencyInject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.SQLite.DependencyInjection", "src\drivers\FP.UoW.SQLite.DependencyInjection\FP.UoW.SQLite.DependencyInjection.csproj", "{9AC2268E-AB62-49F5-906B-2185CA8DEC3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.SQLite.Tests", "tests\FP.UoW.SQLite.Tests\FP.UoW.SQLite.Tests.csproj", "{AE6531A3-18B4-422B-99E4-F35A288F974B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{9AC2268E-AB62-49F5-906B-2185CA8DEC3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AC2268E-AB62-49F5-906B-2185CA8DEC3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AC2268E-AB62-49F5-906B-2185CA8DEC3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE6531A3-18B4-422B-99E4-F35A288F974B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE6531A3-18B4-422B-99E4-F35A288F974B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE6531A3-18B4-422B-99E4-F35A288F974B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE6531A3-18B4-422B-99E4-F35A288F974B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +95,7 @@ Global
 		{BC969773-89DA-4CB5-BA36-63E03C7FA613} = {EB43454C-7393-41A9-B391-8CA04C4B706C}
 		{200D9C33-BDCD-4718-BEAE-282DA2C196F3} = {8A7C0D98-3FE5-4CF8-8DFF-15E03BCDEDA1}
 		{9AC2268E-AB62-49F5-906B-2185CA8DEC3E} = {EB43454C-7393-41A9-B391-8CA04C4B706C}
+		{AE6531A3-18B4-422B-99E4-F35A288F974B} = {1E6E053C-9938-48CB-ABE3-3C5E4782A302}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06C47C78-33AB-4295-9B8C-BCF6C134F17E}

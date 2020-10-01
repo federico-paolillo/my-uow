@@ -6,22 +6,31 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <summary>
-    /// Implementation of an Unit of Work
+    ///     Implementation of an Unit of Work
     /// </summary>
     public sealed class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly IDatabaseConnectionFactory connectionFactory;
+
+        public UnitOfWork(IDatabaseConnectionFactory connectionFactory)
+        {
+            this.connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+        }
+
+        public void Dispose()
+        {
+            Transaction?.Dispose();
+            Connection?.Dispose();
+
+            Transaction = null;
+            Connection = null;
+        }
 
         /// <inheritdoc />
         public DbConnection Connection { get; private set; }
 
         /// <inheritdoc />
         public DbTransaction Transaction { get; private set; }
-
-        public UnitOfWork(IDatabaseConnectionFactory connectionFactory)
-        {
-            this.connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
-        }
 
         /// <inheritdoc />
         public async Task OpenConnectionAsync(CancellationToken cancellationToken = default)
@@ -33,14 +42,14 @@ namespace FP.UoW
             cancellationToken.ThrowIfCancellationRequested();
 
             var newConnection = await connectionFactory.MakeNewAsync(cancellationToken)
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             if (newConnection is null)
                 throw new InvalidOperationException(
                     "No DbConnection instance was created, implementation returned null");
 
             await newConnection.OpenAsync(cancellationToken)
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             Connection = newConnection;
         }
@@ -57,10 +66,10 @@ namespace FP.UoW
             cancellationToken.ThrowIfCancellationRequested();
 
             await Connection.CloseAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             await Connection.DisposeAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             Connection = null;
         }
@@ -73,15 +82,13 @@ namespace FP.UoW
                     "There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
 
             if (Connection is null)
-            {
                 await OpenConnectionAsync(cancellationToken)
-                    .ConfigureAwait(continueOnCapturedContext: false);
-            }
+                    .ConfigureAwait(false);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             var newTransaction = await Connection.BeginTransactionAsync(cancellationToken)
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             Transaction = newTransaction;
         }
@@ -95,15 +102,15 @@ namespace FP.UoW
             cancellationToken.ThrowIfCancellationRequested();
 
             await Transaction.CommitAsync(cancellationToken)
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             await Transaction.DisposeAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             Transaction = null;
 
             await CloseConnectionAsync(cancellationToken)
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -115,24 +122,15 @@ namespace FP.UoW
             cancellationToken.ThrowIfCancellationRequested();
 
             await Transaction.RollbackAsync(cancellationToken)
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             await Transaction.DisposeAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+                .ConfigureAwait(false);
 
             Transaction = null;
 
             await CloseConnectionAsync(cancellationToken)
-                .ConfigureAwait(continueOnCapturedContext: false);
-        }
-
-        public void Dispose()
-        {
-            Transaction?.Dispose();
-            Connection?.Dispose();
-
-            Transaction = null;
-            Connection = null;
+                .ConfigureAwait(false);
         }
     }
 }

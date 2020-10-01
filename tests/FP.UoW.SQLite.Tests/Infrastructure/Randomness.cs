@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace FP.UoW.Tests
+namespace FP.UoW.SQLite.Tests.Infrastructure
 {
     public static class Randomness
     {

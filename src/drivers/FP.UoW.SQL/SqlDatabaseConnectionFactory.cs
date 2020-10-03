@@ -22,9 +22,16 @@ namespace FP.UoW.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            DbConnection connection = new SqlConnection(connectionString.Value);
+            var connection = MakeNew();
 
             return Task.FromResult(connection);
+        }
+
+        public DbConnection MakeNew()
+        {
+            DbConnection connection = new SqlConnection(connectionString.Value);
+
+            return connection;
         }
     }
 }

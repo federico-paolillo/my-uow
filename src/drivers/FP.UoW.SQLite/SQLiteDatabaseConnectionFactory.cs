@@ -22,9 +22,16 @@ namespace FP.UoW.SQLite
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            DbConnection connection = new SQLiteConnection(connectionString.Value);
+            var connection = MakeNew();
 
             return Task.FromResult(connection);
+        }
+
+        public DbConnection MakeNew()
+        {
+            DbConnection connection = new SQLiteConnection(connectionString.Value);
+
+            return connection;
         }
     }
 }

@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace FP.UoW.SQLite.Tests
 {
-    public sealed class SQLiteUnitOfWorkTest
+    public sealed class SQLiteUnitOfWorkAsyncTest
     {
         private string databaseFileName;
 

@@ -1,51 +1,46 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FP.UoW.SQLite;
 using Moq;
 using NUnit.Framework;
 
 namespace FP.UoW.Tests
 {
-    public sealed class UnitOfWorkTest
+    public sealed class UnitOfWorkSyncTest
     {
         [Test]
-        public async Task A_Connection_can_t_be_open_twice()
+        public void A_Connection_can_t_be_open_twice()
         {
             var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
 
-            await unitOfWork.OpenConnectionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.OpenConnection();
 
-            async Task OpenConnectionAgainAsync()
+            void OpenConnectionAgain()
             {
-                await unitOfWork.OpenConnectionAsync()
-                    .ConfigureAwait(false);
+                unitOfWork.OpenConnection();
             }
 
-            Assert.That(OpenConnectionAgainAsync, Throws.InvalidOperationException);
+            Assert.That(OpenConnectionAgain, Throws.InvalidOperationException);
         }
 
         [Test]
-        public async Task A_Transaction_can_t_begin_twice()
+        public void A_Transaction_can_t_begin_twice()
         {
             var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
 
-            await unitOfWork.BeginTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.BeginTransaction();
 
-            async Task BeginTransactionAgainAsync()
+            void BeginTransactionAgain()
             {
-                await unitOfWork.BeginTransactionAsync()
-                    .ConfigureAwait(false);
+                unitOfWork.BeginTransaction();
             }
 
-            Assert.That(BeginTransactionAgainAsync, Throws.InvalidOperationException);
+            Assert.That(BeginTransactionAgain, Throws.InvalidOperationException);
         }
 
         [Test]
@@ -53,38 +48,35 @@ namespace FP.UoW.Tests
         {
             var brokenConnectionFactoryMock = new Mock<IDatabaseConnectionFactory>();
 
-            brokenConnectionFactoryMock.Setup(m => m.MakeNewAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(value: null);
+            brokenConnectionFactoryMock.Setup(m => m.MakeNew())
+                .Returns(value: null);
 
             using var unitOfWork = new UnitOfWork(brokenConnectionFactoryMock.Object);
 
-            async Task TryOpenConnectionAsync()
+            void TryOpenConnection()
             {
-                await unitOfWork.OpenConnectionAsync()
-                    .ConfigureAwait(false);
+                unitOfWork.OpenConnection();
             }
 
-            Assert.That(TryOpenConnectionAsync, Throws.InvalidOperationException);
+            Assert.That(TryOpenConnection, Throws.InvalidOperationException);
         }
 
         [Test]
-        public async Task Connection_can_t_be_closed_without_commiting_or_rolling_back_the_transaction()
+        public void Connection_can_t_be_closed_without_commiting_or_rolling_back_the_transaction()
         {
             var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
 
-            await unitOfWork.BeginTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.BeginTransaction();
 
-            async Task TryCloseConnectionAsync()
+            void TryCloseConnection()
             {
-                await unitOfWork.CloseConnectionAsync()
-                    .ConfigureAwait(false);
+                unitOfWork.CloseConnection();
             }
 
-            Assert.That(TryCloseConnectionAsync, Throws.InvalidOperationException);
+            Assert.That(TryCloseConnection, Throws.InvalidOperationException);
         }
 
         [Test]
@@ -95,30 +87,28 @@ namespace FP.UoW.Tests
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
 
-            async Task TryRollbackTransactionAsync()
+            void TryRollbackTransaction()
             {
-                await unitOfWork.RollbackTransactionAsync()
-                    .ConfigureAwait(false);
+                unitOfWork.RollbackTransaction();
             }
 
-            Assert.That(TryRollbackTransactionAsync, Throws.InvalidOperationException);
+            Assert.That(TryRollbackTransaction, Throws.InvalidOperationException);
         }
 
         [Test]
-        public void Transaction_can_t_be_commited_back_without_beginning_it()
+        public void Transaction_can_t_be_commited_without_beginning_it()
         {
             var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
 
-            async Task TryCommitTransactionAsync()
+            void TryCommitTransaction()
             {
-                await unitOfWork.CommitTransactionAsync()
-                    .ConfigureAwait(false);
+                unitOfWork.CommitTransaction();
             }
 
-            Assert.That(TryCommitTransactionAsync, Throws.InvalidOperationException);
+            Assert.That(TryCommitTransaction, Throws.InvalidOperationException);
         }
 
         [Test]
@@ -129,13 +119,12 @@ namespace FP.UoW.Tests
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
 
-            async Task TryCloseConnectionAsync()
+            void TryCloseConnection()
             {
-                await unitOfWork.CloseConnectionAsync()
-                    .ConfigureAwait(false);
+                unitOfWork.CloseConnection();
             }
 
-            Assert.That(TryCloseConnectionAsync, Throws.Nothing);
+            Assert.That(TryCloseConnection, Throws.Nothing);
         }
     }
 }

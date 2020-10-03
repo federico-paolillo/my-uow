@@ -32,7 +32,7 @@ namespace FP.UoW.SQLite.Tests
                     .ForSQLite(connectionString: null);
             }
 
-            Assert.That(TryAddSQLiteWithoutConnectionString, Throws.ArgumentNullException);
+            Assert.That(TryAddSQLiteWithoutConnectionString, Throws.ArgumentException);
         }
         
         [TestCaseSource(typeof(ServiceLifetimesTestData), nameof(ServiceLifetimesTestData.Lifetimes))]

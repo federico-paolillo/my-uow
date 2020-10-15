@@ -8,8 +8,6 @@ namespace FP.UoW.Sql.Tests.Infrastructure
         private const int MIN_STRING_LENGTH = 8;
         private const int MAX_STRING_LENGTH = 32;
 
-        private const int DATABASE_NAME_LENGTH = 16;
-
         private const int MIN_NUMBER = 100_000;
         private const int MAX_NUMBER = 999_999;
 

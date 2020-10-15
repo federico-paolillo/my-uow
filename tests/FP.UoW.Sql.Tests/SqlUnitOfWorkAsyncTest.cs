@@ -9,9 +9,18 @@ using NUnit.Framework;
 
 namespace FP.UoW.Sql.Tests
 {
-    [TestFixture(IgnoreReason = "Requires SQL Server Local DB")]
     public sealed class SqlUnitOfWorkAsyncTest
     {
+        private string databaseName;
+
+        private TestModel randomModel;
+
+        private ServiceProvider serviceProvider;
+
+        private IServiceScope serviceScope;
+
+        private IUnitOfWork unitOfWork;
+
         [SetUp]
         public async Task Setup()
         {
@@ -45,16 +54,6 @@ namespace FP.UoW.Sql.Tests
                 .ConfigureAwait(false);
         }
 
-        private string databaseName;
-
-        private TestModel randomModel;
-
-        private ServiceProvider serviceProvider;
-
-        private IServiceScope serviceScope;
-
-        private IUnitOfWork unitOfWork;
-
         [Test]
         public async Task Reads_and_writes_from_Sql()
         {
@@ -77,6 +76,8 @@ namespace FP.UoW.Sql.Tests
         [Test]
         public async Task Writes_to_Sql_can_be_rolled_back()
         {
+            //Step 1
+
             await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(false);
 
@@ -85,6 +86,8 @@ namespace FP.UoW.Sql.Tests
 
             await unitOfWork.CommitTransactionAsync()
                 .ConfigureAwait(false);
+
+            //Step 2
 
             await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(false);
@@ -97,6 +100,8 @@ namespace FP.UoW.Sql.Tests
 
             await unitOfWork.RollbackTransactionAsync()
                 .ConfigureAwait(false);
+
+            //Step 3
 
             await unitOfWork.OpenConnectionAsync()
                 .ConfigureAwait(false);
@@ -112,7 +117,8 @@ namespace FP.UoW.Sql.Tests
         {
             var count = await unitOfWork.Connection.ExecuteScalarAsync<int>(@"
                 SELECT COUNT(*) FROM TestModels;
-            ", transaction: unitOfWork.Transaction);
+            ", transaction: unitOfWork.Transaction)
+                .ConfigureAwait(false);
 
             Assert.That(count, Is.Zero);
         }
@@ -162,6 +168,11 @@ namespace FP.UoW.Sql.Tests
         {
             await using var connection =
                 new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
+
+            //Drop any pending Connections
+
+            await connection.ExecuteAsync($@"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;")
+                .ConfigureAwait(false);
 
             await connection.ExecuteAsync($@"DROP DATABASE [{databaseName}]; ")
                 .ConfigureAwait(false);

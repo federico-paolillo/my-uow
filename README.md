@@ -1,132 +1,206 @@
-# Unit of Work
+# FP.UoW
 
-Simple implementation of an Unit of Work.
+An Unit of Work implementation that simplifies lifetime management of connection and transactions.  
 
-## What is this ?
+## Project overview
 
-This is how I usually implement an Unit of Work, I do this often enough that I wanted to write it once.  
-It is not perfect and it assumes a lot of things but it has proven to be effective enough to be useful.  
+### FP.UoW
 
-## Overview
+The main project is, unsurprisingly, `FP.UoW`.  
+This project provides all the classes needed to use the library.  
+There are no dependencies on any IoC container or other library not defined in .NET Standard 2.1.  
 
-The two projects needed to use the Unit of Work are:  
+#### `UnitOfWork`
 
-- `FP.UoW.Core` contains the `UnitOfWork` itself and all the required types to make it work.  
-- `FP.UoW.Factories` contains database connection factories for MSSQL and SQLite.  
+This class exposes methods to manage the underlying database connection and transaction.  
+Once you open a connection and, **optionally**, begin a transaction the Unit of Work is ready to be used.  
+You can access the `Connection` and `Transaction` properties to execute your database queries.  
+When you work is done remember to close any database resource using the methods provided on the `UnitOfWork`.  
+It is possible to use an `UnitOfWork` multiple times without the need to create a new one every time.  
 
-This package gives for granted that you are using some form of Dependency Injection in your Application.  
-There are native extension methods for `Microsoft.Extensions.DependencyInjection` and an additional package for Autofac.  
-Optionally, you can use the `UnitOfWork` without Dependency Injection but I don't recommend it, as it would made lifetime management hard.  
+**Note**: `UnitOfWork` is not thread safe, create a new `UnitOfWork` for every thread.  
+**Note**: `UnitOfWork` can only have one connection and one transaction running at a time.  
 
-The two most important interfaces needed to work with `FP.UoW` are: `IDatabaseUnitOfWork` and `IDatabaseSession`.  
+To reduce boilerplate, any time you begin a transaction a new connection is opened for you automatically.  
+Conversely, when committing or rolling-back a transaction, the connection is closed for you automatically.  
+If you want to further reduce boilerplate have a look at `UnitOfWorkController`.  
 
-### `IDatabaseUnitOfWork` 
+**Note:** Only use the methods on the `UnitOfWork` to alter the connection and transaction exposed.  
+**Note:** You can open a connection without necessarily beginning a transaction (useful when just reading).   
 
-This interface exposes all the methods needed to manage the lifetime of the underlying connection and transaction.  
-This interface should be injected in all those classes that invoke repository methods.  
-Classes using this interface will be responsible to manage the connection, the transaction and to orchestrate any repository invocation.  
+_Remark:_ Exposing `Connection` and `Transaction` violate encapsulation but it is the most effective to make them accessible.  
 
-__Note:__ You are not required to always begin a transaction if you simply want to read some data from the database.
+You might have noticed that `UnitOfWork` implements two interfaces: `IUnitOfWork` and `IDatabaseSession`.  
+These two interfaces are meant to provide a different 'view' to the Unit of Work to different actors and promotes [SRP](https://en.wikipedia.org/wiki/Single-responsibility_principle).  
+`IDatabaseSession` is meant to be referenced by those classes that only need to access the current connection and transaction.  
+`IUnitOfWork` is meant for those classes that manage the lifetime of the current connection and transaction.  
+This separation ensures a clear cut separation of concerns between the two use cases described above.  
+In general, your repositories will depend on `IDatabaseSession` and your services, controllers, etc... will depend on `IUnitOfWork`.  
 
-### `IDatabaseSession` 
+_Remark:_ It is not mandatory to separate your Unit of Work usage with `IDatabaseSession` and `IUnitOfWork`.
 
-This interface exposes the connection and transaction that is currently in use.  
-This interface should be injected in a repository to give access to the underlying connection and transaction.  
-Classes using this interface will not manage the connection and transaction.
+#### `IDatabaseUnitOfWork`
 
-__Note:__ Attempting to call methods on the connection and transaction object will result in undefined behavior.  
-__Note:__ The connection and transaction might be null if nobody initialized them via `IDatabaseUnitOfWork`.
+To make a new Unit of Work you need an implementation of this interface.  
+Implementations of `IDatabaseUnitOfWork` provide means for the Unit of Work to get new database connections to use.  
 
-## Lifetime management
+**Note:** There are two factories provided for you for SQLite and Microsoft SQL Server in their respective assembly.  
 
-The idea behind `UnitOfWork` is to delegate the `UnitOfWork` lifetime to the Dependecy Injection container.  
-The `UnitOfWork` is registered with a scoped lifetime, limiting one `UnitOfWork` instance for every request or command.  
-Ensuring that the lifetime is managed by the Dependency Container lifetime scope effectively bounds one `UnitOfWork` to one request or command.  
+_Remark_: Don't use this interface directly, to just open a connection call the appropriate method on the Unit Of Work.  
 
-The DI container will create an `UnitOfWork` instance bound to a lifetime scope then it will dispose of it when said lifetime scope ends.  
-This ensures that User's code does not need to explicitly create or dispose the `UnitOfWork`. 
+#### `UnitOfWorkController`
 
-__Note:__ Calling code should only take care of opening and closing connection and committing and rollingback transactions.  
-__Note:__ User code should not dispose the `UnitOfWork` manually
+To avoid too much boilerplate when using transactions you can use `UnitOfWorkController`.  
+This class abuses the `IDisposable` pattern to automatically begin and commit transactions for you.  
+To learn more, see the Example section that shows how this class can improve readability
 
-## Interface Segregation Principle
+### FP.UoW.DependencyInjection
 
-Although the `UnitOfWork` class is one, it implements different interfaces that provide different "views" to the Unit of Work pattern.  
-`IDatabaseUnitOfWork` allows a service class to have access to the "controls" for the connection and the transaction lifetime.  
-`IDatabaseSession` allows a repository class to have access to the current connection and transaction.  
+This assembly contains extensions methods to wire an `UnitOfWork` with scoped lifetime to `Microsoft.Extensions.DependencyInjection` DI container.  
+You must combine this assembly with one of the database integrations to be able to actually use an `UnitOfWork` from the container.  
 
-This ensures that a class does not have access to methods or data that do not belong to its purpose, reducing mistakes. 
-This splitting of interfaces effectively respects the Interface Segregation Principle where a class is not forced to depend on methods that it does not need.  
+### FP.UoW.SQLite.*
+
+These assemblies contains the integration for SQLite, that is: an implementation of `IDatabaseConnectionFactory` for SQLite.
+These assemblies also provide provide various integrations for different DI containers.
+
+### FP.UoW.Sql.*
+
+These assemblies contains the integration for Microsoft SQL Server, that is: an implementation of `IDatabaseConnectionFactory` for Microsoft SQL Server.
+These assemblies also provide provide various integrations for different DI containers.
 
 ## Example
 
-As said in the "Overview" section, the `IDatabaseUnitOfWork` should be used by a service-like class.  
-A service-like class is usually responsible to "orchestrate" the business logic and call the repositories.  
+**Note:** The examples use the async version of the methods. Sync methods work the same.  
 
-Below is a method of a service-like class that setups the connection, transaction and orchestrates the repositories.  
+### Explicit use of `UnitOfWork`
 
-```csharp
-try
-{
-    //We open the connection, the service always handle the connection and transaction lifetime
-    await unitOfWork.OpenConnectionAsync(cancellationToken)
-        .ConfigureAwait(continueOnCapturedContext: false);
+Let's say you want to insert some records in your SQLite database:
 
-    //Then we start the transaction
-    await unitOfWork.BeginTransactionAsync(cancellationToken)
-        .ConfigureAwait(continueOnCapturedContext: false);
+```c#
 
-    for (int i = 0; i < count; i++)
-    {
-        var thing = new Thing
-        {
-            Column_One = Randomness.Number(),
-            Column_Two = Randomness.Number(),
-            Column_Three = Randomness.Text()
-        };
+var connection = SQLiteDatabaseConnectionString.From("<yourconnectionstringhere>");
+var connectionFactory = new SQLiteDatabaseConnectionFactory(connection);
+using var unitOfWork = new UnitOfWork(connectionFactory);
 
-        //We do all our inserts
-        await thingsRepository.InsertThingAsync(thing)
-            .ConfigureAwait(continueOnCapturedContext: false);
-    }
+try {
 
-    //And we complete the transaction
-    await unitOfWork.CommitTransactionAsync(cancellationToken)
-        .ConfigureAwait(continueOnCapturedContext: false);
+    await unitOfWork.OpenConnectionAsync()
+        .ConfigureAwait(false);
+
+    await unitOfWork.BeginTransactionAsync()
+        .ConfigureAwait(false);
+
+    //unitOfWork.Connection.ExecuteAsync... or whatever you use to execute queries
+
+    await unitOfWork.CommitTransactionAsync()
+        .ConfigureAwait(false);
+
 }
-catch
-{
-    //If something goes wrong (even a Cancellation) we rollback everything
-    await unitOfWork.RollbackTransactionAsync(cancellationToken)
-        .ConfigureAwait(continueOnCapturedContext: false);
+catch {
 
-    //Irrelevant, but, we rethrow the exception because we catch it only to rollback the transaction and not to handle the transaction itself
-    throw;
+    await unitOfWork.RollbackTransactionAsync()
+        .ConfigureAwait(false);
+
 }
-finally
-{
-    //Always remember to close the connection
-    await unitOfWork.CloseConnectionAsync(cancellationToken)
-        .ConfigureAwait(continueOnCapturedContext: false);
+finally {
+
+    await unitOfWork.CloseConnectionAsync()
+        .ConfigureAwait(false);
+
 }
+
 ```
 
-The repositories, instead, should use the `IDatabaseSession` to access the current connection and transaction.  
-Below, we see how a repository uses `IDatabaseSession` to perform its work but __DOES NOT__ attempt to influence the connection and transaction.  
+Now we just want to read some records without making changes:
 
-```csharp
-var query = @"
-    INSERT INTO Things(Column_One, Column_Two, Column_Three)
-    VALUES(@Column_One, @Column_Two, @Column_Three);
-";
+```c#
+var connection = SQLiteDatabaseConnectionString.From("<yourconnectionstringhere>");
+var connectionFactory = new SQLiteDatabaseConnectionFactory(connection);
+using var unitOfWork = new UnitOfWork(connectionFactory);
 
-await databaseSession.Connection.ExecuteAsync(query, param: thing, transaction: databaseSession.Transaction)
-    .ConfigureAwait(continueOnCapturedContext: false);
+try {
+
+    await unitOfWork.OpenConnectionAsync()
+        .ConfigureAwait(false);
+
+    //unitOfWork.Connection.ExecuteAsync... or whatever you use to execute queries
+
+}
+finally {
+
+    await unitOfWork.CloseConnectionAsync()
+        .ConfigureAwait(false);
+
+}
+
+```
+### Implicit connection management
+
+Opening and closing the connection is boring, luckily `Begin/Commit/RollbackTransactionAsync` do that automatically.  
+Let's say you want to insert some records in your SQLite database:
+
+```c#
+
+var connection = SQLiteDatabaseConnectionString.From("<yourconnectionstringhere>");
+var connectionFactory = new SQLiteDatabaseConnectionFactory(connection);
+using var unitOfWork = new UnitOfWork(connectionFactory);
+
+try {
+
+    await unitOfWork.BeginTransactionAsync()
+        .ConfigureAwait(false);
+
+    //unitOfWork.Connection.ExecuteAsync... or whatever you use to execute queries
+
+    await unitOfWork.CommitTransactionAsync()
+        .ConfigureAwait(false);
+
+}
+catch {
+
+    await unitOfWork.RollbackTransactionAsync()
+        .ConfigureAwait(false);
+
+}
+
 ```
 
-To have a better look at the whole picture refer to [the complete example](https://github.com/federico-paolillo/my-uow/tree/master/examples/FP.UoW.Examples.ConsoleApplication).  
+**Note:** Reading records is the same as the example above.
 
-You can run the example with the `list` command to see all the entries saved in the database.  
-Use `insert --count <number>` to add random `<number>` records to the database.  
+### Using `UnitOfWorkController`
 
-__Note:__ The example will create a SQLLite database file called `fp-uow-example.db` next to the executable.  
+To reduce boilerplate even further and forget about managing transactions we can leverage `UnitOfWorkController`.
+Let's say you want to insert some records in your SQLite database:
+
+```c#
+
+var connection = SQLiteDatabaseConnectionString.From("<yourconnectionstringhere>");
+var connectionFactory = new SQLiteDatabaseConnectionFactory(connection);
+using var unitOfWork = new UnitOfWork(connectionFactory);
+using var unitOfWorkController = new UnitOfWorkController(unitOfWork);
+
+try {
+
+    //unitOfWork.Connection.ExecuteAsync... or whatever you use to execute queries
+
+}
+catch {
+
+    await unitOfWorkController.AbortAsync()
+        .ConfigureAwait(false);
+    
+}
+
+```
+
+**Note:** Reading records is the same as the example above.
+
+-- TODO --
+
+## Dependency Injection
+
+### Lifetime management
+
+### Supported DI Containers
+

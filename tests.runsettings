@@ -4,7 +4,10 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <ExcludeByFile>examples/**,tests/**,</ExcludeByFile> <!-- Globbing filter -->
+          <Format>lcov</Format>
+          <IncludeDirectory>src</IncludeDirectory>
+          <SingleHit>true</SingleHit>
+          <SkipAutoProps>true</SkipAutoProps>
         </Configuration>
       </DataCollector>
     </DataCollectors>

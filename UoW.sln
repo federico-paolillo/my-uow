@@ -12,6 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{599337C8
 		LICENSE = LICENSE
 		README.md = README.md
 		UoW.ruleset = UoW.ruleset
+		global.json = global.json
+		.config\dotnet-tools.json = .config\dotnet-tools.json
+		tests.runsettings = tests.runsettings
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite", "src\drivers\FP.UoW.SQLite\FP.UoW.SQLite.csproj", "{BC969773-89DA-4CB5-BA36-63E03C7FA613}"
@@ -41,6 +44,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.SQLite.Tests", "tests\FP.UoW.SQLite.Tests\FP.UoW.SQLite.Tests.csproj", "{AE6531A3-18B4-422B-99E4-F35A288F974B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Sql.Tests", "tests\FP.UoW.Sql.Tests\FP.UoW.Sql.Tests.csproj", "{7D7C3321-F9E8-488A-ABE4-AC702EDC289B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{FD4D462F-A1C7-4DF9-AB1A-1D451B38FAB5}"
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -15,8 +15,8 @@ jobs:
       - name: Build
         run: dotnet build
       - name: Test
-        run: dotnet test --collect "XPlat Code Coverage" --settings tests.runsettings --results-directory ${{github.workspace}}/codecov
+        run: dotnet test --collect "XPlat Code Coverage" --settings tests.runsettings --results-directory ./codecov
       - name: Upload Codecov
         uses: codecov/codecov-action@v1.0.13
         with:
-          directory: ${{github.workspace}}/codecov 
+          directory: ./codecov/**/*.cobertura.xml

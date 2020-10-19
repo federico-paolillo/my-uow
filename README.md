@@ -196,11 +196,65 @@ catch {
 
 **Note:** Reading records is the same as the example above.
 
--- TODO --
-
 ## Dependency Injection
+
+Arguably, FP.UoW works best when used in combination with Dependency Injection.  
 
 ### Lifetime management
 
+The main idea behind FP.UoW is to delegate lifetime management to the DI container, binding the lifetime of all the resource to the current DI scope.  
+
+--TODO--
+
 ### Supported DI Containers
 
+- [x] Microsoft.Extensions.Dependency.Injection
+- [ ] Autofac
+- [ ] Unity
+- [ ] Ninject
+
+**Note:** Others will come, eventually
+
+## Extensions
+
+FP.UoW is extensible by default and writing custom extensions is not that complicated.  
+If you need to support a new database you have to implement `IDatabaseConnectionFactory` and return connections for your database.  
+Optionally, you can decide to add support for your Dependency Injection container of choice by registering your `IDatabaseConnectionFactory` implementation.  
+
+Have a look at this implementation of `IDatabaseConnectionFactory` for SQLite (included) as a reference:  
+
+```c#
+public sealed class SQLiteDatabaseConnectionFactory : IDatabaseConnectionFactory
+{
+    private readonly SQLiteDatabaseConnectionString connectionString;
+
+    public SQLiteDatabaseConnectionFactory(SQLiteDatabaseConnectionString connectionString)
+    {
+        this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+    }
+
+    public Task<DbConnection> MakeNewAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var connection = MakeNew();
+
+        return Task.FromResult(connection);
+    }
+
+    public DbConnection MakeNew()
+    {
+        DbConnection connection = new SQLiteConnection(connectionString.Value);
+
+        return connection;
+    }
+}
+```
+
+As you can see there is an async and a sync version of the method `MakeNewConnection()`.  
+Using the sync methods of the `UnitOfWork` will call the sync methods of your `IDatabaseConnectionFactory`.  
+`MakeNewConnectionAsync` exists mainly to support scenarios where you retrieve your connection strings asynchronously (e.g.: from a file).  
+In general, you will almost always implement `MakeNewConnection()` and return its result from `MakeNewConnectionAsync` using `Task.FromResult`.  
+
+The `IDatabaseConnectionFactory` implemented here uses the library [ValueOf](https://github.com/mcintyre321/ValueOf) to avoid using the `string` type as connection string ([see "Missing abstraction" here](https://en.wikipedia.org/wiki/Design_smell)).  
+Feel free to use `string` directly if you wish, using [ValueOf](https://github.com/mcintyre321/ValueOf) is not required.  

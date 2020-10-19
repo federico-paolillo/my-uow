@@ -6,7 +6,7 @@
         <Configuration>
           <Format>lcov</Format>
           <IncludeDirectory>src</IncludeDirectory>
-          <SingleHit>true</SingleHit>
+          <SingleHit>false</SingleHit>
           <SkipAutoProps>true</SkipAutoProps>
         </Configuration>
       </DataCollector>

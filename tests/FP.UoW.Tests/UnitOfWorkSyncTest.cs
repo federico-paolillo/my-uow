@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using FP.UoW.SQLite;
+﻿using FP.UoW.SQLite;
 using Moq;
 using NUnit.Framework;
 
@@ -7,6 +6,17 @@ namespace FP.UoW.Tests
 {
     public sealed class UnitOfWorkSyncTest
     {
+        [Test]
+        public void Cannot_create_a_UnitOfWork_without_ConnectionFactory()
+        {
+            void TryCreateUnitOfWorkWithoutConnectionFactory()
+            {
+                new UnitOfWork(null);
+            }
+
+            Assert.That(TryCreateUnitOfWorkWithoutConnectionFactory, Throws.ArgumentNullException);
+        }
+
         [Test]
         public void A_Connection_can_t_be_open_twice()
         {

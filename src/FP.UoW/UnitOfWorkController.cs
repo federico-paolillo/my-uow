@@ -41,8 +41,6 @@ namespace FP.UoW
         /// <returns>A new <see cref="UnitOfWorkController" /> controlling the <see cref="IUnitOfWork" /></returns>
         public static async Task<UnitOfWorkController> WrapAsync(IUnitOfWork unitOfWorkToWrap)
         {
-            if (unitOfWorkToWrap == null) throw new ArgumentNullException(nameof(unitOfWorkToWrap));
-
             var controller = new UnitOfWorkController(unitOfWorkToWrap);
 
             // You can't really stop here. Wrap is kind of an "atomic" operation

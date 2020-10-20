@@ -1,0 +1,38 @@
+name: draft-releases
+on:
+  push:
+    tags:
+      - 'v*.*.*-draft*'
+jobs:
+  release:
+    runs-on: windows-2019
+    steps:
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: '3.1.403'
+      - name: Checkout source code
+        uses: actions/checkout@v2.3.3
+      - name: Restore FP.UoW solution
+        run: dotnet restore
+      - name: Build FP.UoW solution
+        run: dotnet build
+      - name: Test FP.UoW solution
+        run: dotnet test
+      - name: Package FP.UoW solution
+        run: dotnet pack --configuration Release --output ${{github.workspace}}/nupkgs
+      - name: Draft release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          release_name: Release ${{github.ref}}
+          tag_name: ${{github.ref}}
+          draft: true
+      # upload-release-asset does not support multiple files at once.
+      # To work around that lack of support I have to write a bash script that uses hub to upload assets to a release
+      - name: Upload assets with GitHub hub
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: hub release edit $(find ${{github.workspace}}/nupkgs -type f -name "*.*nupkg") ${{github.ref}}
+          

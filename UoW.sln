@@ -48,6 +48,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{FD4D462F-A1C7-4DF9-AB1A-1D451B38FAB5}"
 ProjectSection(SolutionItems) = preProject
 	.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
+	.github\workflows\draft-release.yml = .github\workflows\draft-release.yml
+	.github\workflows\master-continuous-integration.yml = .github\workflows\master-continuous-integration.yml
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Releases", "Releases", "{D5304E3C-36F8-4359-BF7B-F55E87AC7AFD}"
+ProjectSection(SolutionItems) = preProject
+	releases\1.0.0-draft1.md = releases\1.0.0-draft1.md
 EndProjectSection
 EndProject
 Global

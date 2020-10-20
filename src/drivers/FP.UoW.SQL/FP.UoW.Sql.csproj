@@ -6,12 +6,19 @@
         <Authors>federico-paolillo</Authors>
         <Company>federico-paolillo</Company>
         <Product>FP.UoW</Product>
-        <Description>
-            My personal take on an Unit of Work implementation that I often use in Web applications and APIs.
-        </Description>
+        <Description>Microsoft SQL Server integration for FP.UoW</Description>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <Copyright>© 2020 federico-paolillo</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Title>Unit Of Work</Title>
+        <PackageProjectUrl>https://github.com/federico-paolillo/my-uow</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/federico-paolillo/my-uow.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>uow, unitofwork, pattern, sql, mssql</PackageTags>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,23 +30,30 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <CodeAnalysisRuleSet>../../../UoW.ruleset</CodeAnalysisRuleSet>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <Deterministic>true</Deterministic>
+        <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>
+
         <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-        <PackageReference Include="ValueOf" Version="1.0.17" />
+
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.2"/>
+        <PackageReference Include="ValueOf" Version="1.0.17"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ValueOf" Version="1.0.17" />
-    </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\FP.UoW\FP.UoW.csproj" />
+        <ProjectReference Include="..\..\FP.UoW\FP.UoW.csproj"/>
+
     </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
-name: continuous-integration
+name: master-continuous-integration
 on:
   push:
     branches:
-      - '!master'
+      - 'master'
     paths:
       - '**.cs'
 jobs:
@@ -20,4 +20,8 @@ jobs:
       - name: Build FP.UoW solution
         run: dotnet build
       - name: Test FP.UoW solution
-        run: dotnet test
+        run: dotnet test --collect "XPlat Code Coverage" --settings tests.runsettings --results-directory ${{github.workspace}}/codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1.0.13
+        with:
+          files: "'${{github.workspace}}/codecov/**/coverage.info'"

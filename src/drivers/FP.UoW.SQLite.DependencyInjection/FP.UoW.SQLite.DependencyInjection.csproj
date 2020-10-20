@@ -2,6 +2,23 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Authors>federico-paolillo</Authors>
+        <Company>federico-paolillo</Company>
+        <Product>FP.UoW</Product>
+        <Description>Microsoft.Extensions.DependencyInjection integration for FP.UoW.SQLite</Description>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Copyright>© 2020 federico-paolillo</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Title>Unit Of Work</Title>
+        <PackageProjectUrl>https://github.com/federico-paolillo/my-uow</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/federico-paolillo/my-uow.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>uow, unitofwork, pattern, di, dependency injection, sql, sqlite</PackageTags>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -13,6 +30,11 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <CodeAnalysisRuleSet>../../../UoW.ruleset</CodeAnalysisRuleSet>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <Deterministic>true</Deterministic>
+        <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,13 +44,15 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.9" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.9"/>
+
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
 
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj" />
-      <ProjectReference Include="..\FP.UoW.SQLite\FP.UoW.SQLite.csproj" />
+        <ProjectReference Include="..\..\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj"/>
+        <ProjectReference Include="..\FP.UoW.SQLite\FP.UoW.SQLite.csproj"/>
     </ItemGroup>
 
 </Project>

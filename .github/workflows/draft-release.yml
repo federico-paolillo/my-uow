@@ -34,5 +34,7 @@ jobs:
       - name: Upload assets with GitHub hub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        run: hub release edit $(find ${{github.workspace}}/nupkgs -type f -name "*.*nupkg") ${{github.ref}}
+        # See: https://ss64.com/bash/find.html - https://github.com/actions/upload-release-asset/issues/28 - https://unix.stackexchange.com/questions/15308/how-to-use-find-command-to-search-for-multiple-extensions
+        # ${GITHUB_REF##*/} is removing a long prefix of */ leaving only the remainder of the tag
+        run: hub release edit $(find ${{github.workspace}}/nupkgs -type f \( -iname "*.nupkg" -o -iname "*.snupkg" \) -printf "-a %p") ${GITHUB_REF##*/}
           

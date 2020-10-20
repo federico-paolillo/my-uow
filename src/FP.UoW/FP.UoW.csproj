@@ -6,13 +6,19 @@
     <Authors>federico-paolillo</Authors>
     <Company>federico-paolillo</Company>
     <Product>FP.UoW</Product>
-    <Description>
-        My personal take on an Unit of Work implementation that I often use in Web applications and APIs.
-        This package contains the core types and an integration with Microsoft.Extensions.DependencyInjection
-    </Description>
+    <Description>Implementation of an Unit of Work flexible enough to be useful</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Copyright>© 2020 federico-paolillo</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title>Unit Of Work</Title>
+    <PackageProjectUrl>https://github.com/federico-paolillo/my-uow</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/federico-paolillo/my-uow.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>uow, unitofwork, pattern</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,6 +30,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CodeAnalysisRuleSet>../../UoW.ruleset</CodeAnalysisRuleSet>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +41,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
 
   </ItemGroup>
 

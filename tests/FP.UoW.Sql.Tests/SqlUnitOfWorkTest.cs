@@ -1,9 +1,12 @@
-﻿using System.Data.SqlClient;
-using Dapper;
+﻿using Dapper;
+
 using FP.UoW.DependencyInjection;
 using FP.UoW.Sql.DependencyInjection;
 using FP.UoW.Sql.Tests.Infrastructure;
+
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
+
 using NUnit.Framework;
 
 namespace FP.UoW.Sql.Tests

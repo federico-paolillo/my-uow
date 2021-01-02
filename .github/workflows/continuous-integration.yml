@@ -5,11 +5,11 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@latest
         with:
-          dotnet-version: '3.1.403'
+          dotnet-version: '5.0.101'
       - name: Checkout 
-        uses: actions/checkout@v2.3.3
+        uses: actions/checkout@latest
       - name: Restore
         run: dotnet restore
       - name: Build

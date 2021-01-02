@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
-using FP.UoW.SQLite;
+﻿using FP.UoW.SQLite;
+
 using Moq;
+
 using NUnit.Framework;
 
 namespace FP.UoW.Tests
@@ -10,7 +11,7 @@ namespace FP.UoW.Tests
         [Test]
         public void A_Connection_can_t_be_open_twice()
         {
-            var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
@@ -28,7 +29,7 @@ namespace FP.UoW.Tests
         [Test]
         public void A_Transaction_can_t_begin_twice()
         {
-            var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
@@ -64,7 +65,7 @@ namespace FP.UoW.Tests
         [Test]
         public void Connection_can_t_be_closed_without_commiting_or_rolling_back_the_transaction()
         {
-            var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
@@ -82,7 +83,7 @@ namespace FP.UoW.Tests
         [Test]
         public void Transaction_can_t_be_rolled_back_without_beginning_it()
         {
-            var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
@@ -98,7 +99,7 @@ namespace FP.UoW.Tests
         [Test]
         public void Transaction_can_t_be_commited_without_beginning_it()
         {
-            var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
@@ -114,7 +115,7 @@ namespace FP.UoW.Tests
         [Test]
         public void Closing_Connection_that_are_not_open_does_nothing()
         {
-            var sqliteDatabaseConnectionString = SQLiteDatabaseConnectionString.From("Data Source = whatever.db");
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
             using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);

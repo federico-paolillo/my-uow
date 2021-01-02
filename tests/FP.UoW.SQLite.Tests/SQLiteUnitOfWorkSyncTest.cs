@@ -1,10 +1,14 @@
-using System.IO;
 using Dapper;
+
 using FP.UoW.DependencyInjection;
 using FP.UoW.SQLite.DependencyInjection;
 using FP.UoW.SQLite.Tests.Infrastructure;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using NUnit.Framework;
+
+using System.IO;
 
 namespace FP.UoW.SQLite.Tests
 {

@@ -1,8 +1,4 @@
-﻿using ValueOf;
-
-namespace FP.UoW.SQLite
+﻿namespace FP.UoW.SQLite
 {
-    public sealed class SQLiteDatabaseConnectionString : ValueOf<string, SQLiteDatabaseConnectionString>
-    {
-    }
+    public sealed record SQLiteDatabaseConnectionString(string Value);
 }

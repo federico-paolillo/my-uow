@@ -1,10 +1,13 @@
-﻿using System;
+﻿using FP.UoW.DependencyInjection;
+using FP.UoW.SQLite.DependencyInjection;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using NUnit.Framework;
+
+using System;
 using System.Collections;
 using System.Linq;
-using FP.UoW.DependencyInjection;
-using FP.UoW.SQLite.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 
 namespace FP.UoW.SQLite.Tests
 {
@@ -13,7 +16,7 @@ namespace FP.UoW.SQLite.Tests
         [Test]
         public void If_UoWServiceBuilder_instance_is_null_throws()
         {
-            void TryAddSQLiteToNullReference()
+            static void TryAddSQLiteToNullReference()
             {
                 UoWServiceBuilderExtensions.ForSQLite(null, "random_connection_string_it_does_not_matter");
             }
@@ -24,7 +27,7 @@ namespace FP.UoW.SQLite.Tests
         [Test]
         public void If_Connection_String_is_null_throws()
         {
-            void TryAddSQLiteWithoutConnectionString()
+            static void TryAddSQLiteWithoutConnectionString()
             {
                 var serviceCollection = new ServiceCollection();
 
@@ -34,7 +37,7 @@ namespace FP.UoW.SQLite.Tests
 
             Assert.That(TryAddSQLiteWithoutConnectionString, Throws.ArgumentException);
         }
-        
+
         [TestCaseSource(typeof(ServiceLifetimesTestData), nameof(ServiceLifetimesTestData.Lifetimes))]
         public void Services_are_registered_as_expected(Type service, ServiceLifetime lifetime)
         {

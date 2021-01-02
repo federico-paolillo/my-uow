@@ -1,6 +1,8 @@
-﻿using System;
-using FP.UoW.DependencyInjection;
+﻿using FP.UoW.DependencyInjection;
+
 using Microsoft.Extensions.DependencyInjection;
+
+using System;
 
 namespace FP.UoW.Sql.DependencyInjection
 {
@@ -11,13 +13,18 @@ namespace FP.UoW.Sql.DependencyInjection
         /// </summary>
         public static IServiceCollection ForSql(this UnitOfWorkServiceBuilder builder, string connectionString)
         {
-            if (builder is null) throw new ArgumentNullException(nameof(builder));
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
 
             if (string.IsNullOrEmpty(connectionString))
+            {
                 throw new ArgumentException($"'{nameof(connectionString)}' cannot be null or empty",
                     nameof(connectionString));
+            }
 
-            var sqlConnectionString = SqlDatabaseConnectionString.From(connectionString);
+            var sqlConnectionString = new SqlDatabaseConnectionString(connectionString);
 
             builder.ServiceCollection.AddSingleton(sqlConnectionString);
             builder.ServiceCollection.AddTransient<IDatabaseConnectionFactory, SqlDatabaseConnectionFactory>();

@@ -1,45 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <Authors>federico-paolillo</Authors>
-        <Company>federico-paolillo</Company>
-        <Product>FP.UoW</Product>
-        <Description>
-            My personal take on an Unit of Work implementation that I often use in Web applications and APIs.
-        </Description>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <Copyright>© 2020 federico-paolillo</Copyright>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DefineConstants>DEBUG</DefineConstants>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <CodeAnalysisRuleSet>../../../UoW.ruleset</CodeAnalysisRuleSet>
-    </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />
+  </ItemGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <CodeAnalysisRuleSet>../../../UoW.ruleset</CodeAnalysisRuleSet>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-        <PackageReference Include="ValueOf" Version="1.0.17" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="ValueOf" Version="1.0.17" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\FP.UoW\FP.UoW.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FP.UoW\FP.UoW.csproj" />
+  </ItemGroup>
 
 </Project>

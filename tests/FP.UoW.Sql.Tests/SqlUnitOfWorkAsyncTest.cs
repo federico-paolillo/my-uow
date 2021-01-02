@@ -1,11 +1,15 @@
-﻿using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
+
 using FP.UoW.DependencyInjection;
 using FP.UoW.Sql.DependencyInjection;
 using FP.UoW.Sql.Tests.Infrastructure;
+
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
+
 using NUnit.Framework;
+
+using System.Threading.Tasks;
 
 namespace FP.UoW.Sql.Tests
 {

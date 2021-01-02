@@ -1,7 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
+
 using NUnit.Framework;
+
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FP.UoW.Tests
 {
@@ -10,7 +12,7 @@ namespace FP.UoW.Tests
         [Test]
         public void Cannot_control_a_null_reference()
         {
-            async Task CreateControllerForNullReference()
+            static async Task CreateControllerForNullReference()
             {
                 await UnitOfWorkController.WrapAsync(null)
                     .ConfigureAwait(false);

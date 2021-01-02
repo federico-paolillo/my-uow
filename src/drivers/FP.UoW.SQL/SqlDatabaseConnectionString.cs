@@ -1,8 +1,4 @@
-﻿using ValueOf;
-
-namespace FP.UoW.Sql
+﻿namespace FP.UoW.Sql
 {
-    public sealed class SqlDatabaseConnectionString : ValueOf<string, SqlDatabaseConnectionString>
-    {
-    }
+    public sealed record SqlDatabaseConnectionString(string Value);
 }

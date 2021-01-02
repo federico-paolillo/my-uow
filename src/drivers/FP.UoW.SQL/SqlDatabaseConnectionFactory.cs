@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+
+using System;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 

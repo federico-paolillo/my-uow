@@ -1,33 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\FP.UoW\FP.UoW.csproj" />
     </ItemGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DefineConstants>DEBUG</DefineConstants>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <CodeAnalysisRuleSet>../../UoW.ruleset</CodeAnalysisRuleSet>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <CodeAnalysisRuleSet>../../UoW.ruleset</CodeAnalysisRuleSet>
-    </PropertyGroup>
-
     <ItemGroup>
-
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.9" />
-
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     </ItemGroup>
 
 </Project>

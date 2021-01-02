@@ -1,10 +1,13 @@
+using FP.UoW.DependencyInjection;
+using FP.UoW.Sql.DependencyInjection;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using NUnit.Framework;
+
 using System;
 using System.Collections;
 using System.Linq;
-using FP.UoW.DependencyInjection;
-using FP.UoW.Sql.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 
 namespace FP.UoW.Sql.Tests
 {
@@ -13,7 +16,7 @@ namespace FP.UoW.Sql.Tests
         [Test]
         public void If_UoWServiceBuilder_instance_is_null_throws()
         {
-            void TryAddSqlToNullReference()
+            static void TryAddSqlToNullReference()
             {
                 UoWServiceBuilderExtensions.ForSql(null, "random_connection_string_it_does_not_matter");
             }
@@ -24,7 +27,7 @@ namespace FP.UoW.Sql.Tests
         [Test]
         public void If_Connection_String_is_null_throws()
         {
-            void TryAddSqlWithoutConnectionString()
+            static void TryAddSqlWithoutConnectionString()
             {
                 var serviceCollection = new ServiceCollection();
 

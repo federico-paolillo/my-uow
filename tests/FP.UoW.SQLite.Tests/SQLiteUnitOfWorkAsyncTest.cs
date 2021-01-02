@@ -1,11 +1,15 @@
-using System.IO;
-using System.Threading.Tasks;
 using Dapper;
+
 using FP.UoW.DependencyInjection;
 using FP.UoW.SQLite.DependencyInjection;
 using FP.UoW.SQLite.Tests.Infrastructure;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using NUnit.Framework;
+
+using System.IO;
+using System.Threading.Tasks;
 
 namespace FP.UoW.SQLite.Tests
 {
@@ -106,7 +110,8 @@ namespace FP.UoW.SQLite.Tests
         {
             var count = await unitOfWork.Connection.ExecuteScalarAsync<int>(@"
                 SELECT COUNT(*) FROM TestModels;
-            ", transaction: unitOfWork.Transaction);
+            ", transaction: unitOfWork.Transaction)
+            .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.That(count, Is.Zero);
         }

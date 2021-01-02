@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW", "src\FP.UoW\FP.UoW
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{599337C8-B377-405C-BAA1-6440C8CB2FCA}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		.config\dotnet-tools.json = .config\dotnet-tools.json
+		global.json = global.json
 		LICENSE = LICENSE
 		README.md = README.md
-		UoW.ruleset = UoW.ruleset
-		global.json = global.json
-		.config\dotnet-tools.json = .config\dotnet-tools.json
 		tests.runsettings = tests.runsettings
 	EndProjectSection
 EndProject
@@ -21,34 +21,30 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite", "src\driver
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Tests", "tests\FP.UoW.Tests\FP.UoW.Tests.csproj", "{02FDF4BF-3851-4F10-B9C7-926C6C782B9A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Examples.ConsoleApplication", "examples\FP.UoW.Examples.ConsoleApplication\FP.UoW.Examples.ConsoleApplication.csproj", "{10EBAA5F-0557-4057-BBEE-83200D180FFC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{9B341B44-8E8B-4CDE-9652-95B9425DE610}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1E6E053C-9938-48CB-ABE3-3C5E4782A302}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Sql", "src\drivers\FP.UoW.SQL\FP.UoW.Sql.csproj", "{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{E24173A1-162C-4345-9911-5BA7550F46D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.DependencyInjection", "src\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj", "{454101FB-EC95-4573-8FEB-60A5A5F12099}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.DependencyInjection", "src\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj", "{454101FB-EC95-4573-8FEB-60A5A5F12099}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sql", "Sql", "{8A7C0D98-3FE5-4CF8-8DFF-15E03BCDEDA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLite", "SQLite", "{EB43454C-7393-41A9-B391-8CA04C4B706C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Sql.DependencyInjection", "src\drivers\FP.UoW.Sql.DependencyInjection\FP.UoW.Sql.DependencyInjection.csproj", "{200D9C33-BDCD-4718-BEAE-282DA2C196F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Sql.DependencyInjection", "src\drivers\FP.UoW.Sql.DependencyInjection\FP.UoW.Sql.DependencyInjection.csproj", "{200D9C33-BDCD-4718-BEAE-282DA2C196F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.SQLite.DependencyInjection", "src\drivers\FP.UoW.SQLite.DependencyInjection\FP.UoW.SQLite.DependencyInjection.csproj", "{9AC2268E-AB62-49F5-906B-2185CA8DEC3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite.DependencyInjection", "src\drivers\FP.UoW.SQLite.DependencyInjection\FP.UoW.SQLite.DependencyInjection.csproj", "{9AC2268E-AB62-49F5-906B-2185CA8DEC3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.SQLite.Tests", "tests\FP.UoW.SQLite.Tests\FP.UoW.SQLite.Tests.csproj", "{AE6531A3-18B4-422B-99E4-F35A288F974B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite.Tests", "tests\FP.UoW.SQLite.Tests\FP.UoW.SQLite.Tests.csproj", "{AE6531A3-18B4-422B-99E4-F35A288F974B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FP.UoW.Sql.Tests", "tests\FP.UoW.Sql.Tests\FP.UoW.Sql.Tests.csproj", "{7D7C3321-F9E8-488A-ABE4-AC702EDC289B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Sql.Tests", "tests\FP.UoW.Sql.Tests\FP.UoW.Sql.Tests.csproj", "{7D7C3321-F9E8-488A-ABE4-AC702EDC289B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{FD4D462F-A1C7-4DF9-AB1A-1D451B38FAB5}"
-ProjectSection(SolutionItems) = preProject
-	.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,10 +64,6 @@ Global
 		{02FDF4BF-3851-4F10-B9C7-926C6C782B9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02FDF4BF-3851-4F10-B9C7-926C6C782B9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02FDF4BF-3851-4F10-B9C7-926C6C782B9A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10EBAA5F-0557-4057-BBEE-83200D180FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10EBAA5F-0557-4057-BBEE-83200D180FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10EBAA5F-0557-4057-BBEE-83200D180FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10EBAA5F-0557-4057-BBEE-83200D180FFC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -101,12 +93,11 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{BC969773-89DA-4CB5-BA36-63E03C7FA613} = {EB43454C-7393-41A9-B391-8CA04C4B706C}
 		{02FDF4BF-3851-4F10-B9C7-926C6C782B9A} = {1E6E053C-9938-48CB-ABE3-3C5E4782A302}
-		{10EBAA5F-0557-4057-BBEE-83200D180FFC} = {9B341B44-8E8B-4CDE-9652-95B9425DE610}
+		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442} = {8A7C0D98-3FE5-4CF8-8DFF-15E03BCDEDA1}
 		{8A7C0D98-3FE5-4CF8-8DFF-15E03BCDEDA1} = {E24173A1-162C-4345-9911-5BA7550F46D9}
 		{EB43454C-7393-41A9-B391-8CA04C4B706C} = {E24173A1-162C-4345-9911-5BA7550F46D9}
-		{6F5E271C-C098-4FC1-AC8F-C6C4F126B442} = {8A7C0D98-3FE5-4CF8-8DFF-15E03BCDEDA1}
-		{BC969773-89DA-4CB5-BA36-63E03C7FA613} = {EB43454C-7393-41A9-B391-8CA04C4B706C}
 		{200D9C33-BDCD-4718-BEAE-282DA2C196F3} = {8A7C0D98-3FE5-4CF8-8DFF-15E03BCDEDA1}
 		{9AC2268E-AB62-49F5-906B-2185CA8DEC3E} = {EB43454C-7393-41A9-B391-8CA04C4B706C}
 		{AE6531A3-18B4-422B-99E4-F35A288F974B} = {1E6E053C-9938-48CB-ABE3-3C5E4782A302}

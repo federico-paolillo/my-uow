@@ -20,7 +20,10 @@ namespace FP.UoW
 
         public void Dispose()
         {
-            if (commitOnDispose) unitOfWork.CommitTransaction();
+            if (commitOnDispose)
+            {
+                unitOfWork.CommitTransaction();
+            }
         }
 
         /// <summary>
@@ -41,7 +44,10 @@ namespace FP.UoW
         /// <returns>A new <see cref="UnitOfWorkController" /> controlling the <see cref="IUnitOfWork" /></returns>
         public static async Task<UnitOfWorkController> WrapAsync(IUnitOfWork unitOfWorkToWrap)
         {
-            if (unitOfWorkToWrap == null) throw new ArgumentNullException(nameof(unitOfWorkToWrap));
+            if (unitOfWorkToWrap == null)
+            {
+                throw new ArgumentNullException(nameof(unitOfWorkToWrap));
+            }
 
             var controller = new UnitOfWorkController(unitOfWorkToWrap);
 

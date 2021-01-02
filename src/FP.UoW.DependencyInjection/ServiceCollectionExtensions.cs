@@ -1,5 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using System;
 
 namespace FP.UoW.DependencyInjection
 {
@@ -11,7 +12,10 @@ namespace FP.UoW.DependencyInjection
         /// </summary>
         public static UnitOfWorkServiceBuilder AddUoW(this IServiceCollection services)
         {
-            if (services is null) throw new ArgumentNullException(nameof(services));
+            if (services is null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
 
             services.AddScoped<UnitOfWork>();
 

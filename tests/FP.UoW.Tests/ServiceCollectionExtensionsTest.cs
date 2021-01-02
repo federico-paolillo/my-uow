@@ -1,10 +1,14 @@
-﻿using System;
+﻿using FP.UoW.DependencyInjection;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Moq;
+
+using NUnit.Framework;
+
+using System;
 using System.Collections;
 using System.Linq;
-using FP.UoW.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using NUnit.Framework;
 
 namespace FP.UoW.Tests
 {
@@ -13,7 +17,7 @@ namespace FP.UoW.Tests
         [Test]
         public void If_ServiceCollection_instance_is_null_throws()
         {
-            void TryAddUoWToNullReference()
+            static void TryAddUoWToNullReference()
             {
                 ServiceCollectionExtensions.AddUoW(null);
             }

@@ -36,8 +36,10 @@ namespace FP.UoW
         public async Task OpenConnectionAsync(CancellationToken cancellationToken = default)
         {
             if (Connection != null)
+            {
                 throw new InvalidOperationException(
                     "There is already a database connection open, you must close it before opening another one");
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -45,8 +47,10 @@ namespace FP.UoW
                 .ConfigureAwait(false);
 
             if (newConnection is null)
+            {
                 throw new InvalidOperationException(
                     "No DbConnection instance was created, implementation returned null");
+            }
 
             await newConnection.OpenAsync(cancellationToken)
                 .ConfigureAwait(false);
@@ -57,14 +61,18 @@ namespace FP.UoW
         public void OpenConnection()
         {
             if (Connection != null)
+            {
                 throw new InvalidOperationException(
                     "There is already a database connection open, you must close it before opening another one");
+            }
 
             var newConnection = connectionFactory.MakeNew();
 
             if (newConnection is null)
+            {
                 throw new InvalidOperationException(
                     "No DbConnection instance was created, implementation returned null");
+            }
 
             newConnection.Open();
 
@@ -74,11 +82,16 @@ namespace FP.UoW
         /// <inheritdoc />
         public async Task CloseConnectionAsync(CancellationToken cancellationToken = default)
         {
-            if (Connection is null) return;
+            if (Connection is null)
+            {
+                return;
+            }
 
             if (Transaction != null)
+            {
                 throw new InvalidOperationException(
                     "There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -93,11 +106,16 @@ namespace FP.UoW
 
         public void CloseConnection()
         {
-            if (Connection is null) return;
+            if (Connection is null)
+            {
+                return;
+            }
 
             if (Transaction != null)
+            {
                 throw new InvalidOperationException(
                     "There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
+            }
 
             Connection.Close();
             Connection.Dispose();
@@ -109,12 +127,16 @@ namespace FP.UoW
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (Transaction != null)
+            {
                 throw new InvalidOperationException(
                     "There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+            }
 
             if (Connection is null)
+            {
                 await OpenConnectionAsync(cancellationToken)
                     .ConfigureAwait(false);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -127,11 +149,15 @@ namespace FP.UoW
         public void BeginTransaction()
         {
             if (Transaction != null)
+            {
                 throw new InvalidOperationException(
                     "There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+            }
 
             if (Connection is null)
+            {
                 OpenConnection();
+            }
 
             var newTransaction = Connection.BeginTransaction();
 
@@ -142,7 +168,9 @@ namespace FP.UoW
         public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (Transaction is null)
+            {
                 throw new InvalidOperationException("You must begin a transaction before committing it");
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -161,7 +189,9 @@ namespace FP.UoW
         public void CommitTransaction()
         {
             if (Transaction is null)
+            {
                 throw new InvalidOperationException("You must begin a transaction before committing it");
+            }
 
             Transaction.Commit();
             Transaction.Dispose();
@@ -175,7 +205,9 @@ namespace FP.UoW
         public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (Transaction is null)
+            {
                 throw new InvalidOperationException("You must begin a transaction before rolling it back");
+            }
 
             await Transaction.RollbackAsync(cancellationToken)
                 .ConfigureAwait(false);
@@ -192,7 +224,9 @@ namespace FP.UoW
         public void RollbackTransaction()
         {
             if (Transaction is null)
+            {
                 throw new InvalidOperationException("You must begin a transaction before rolling it back");
+            }
 
             Transaction.Rollback();
             Transaction.Dispose();

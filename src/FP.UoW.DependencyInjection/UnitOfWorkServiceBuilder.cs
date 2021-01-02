@@ -1,5 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using System;
 
 namespace FP.UoW.DependencyInjection
 {

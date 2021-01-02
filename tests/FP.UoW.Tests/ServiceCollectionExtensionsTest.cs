@@ -15,6 +15,19 @@ namespace FP.UoW.Tests
     public sealed class ServiceCollectionExtensionsTest
     {
         [Test]
+        public void Cannot_create_UnitOfWorkServiceBuilder_without_a_ServiceCollection()
+        {
+            void TryCreateUnitOfWorkConnectionBuilderOnNullServiceCollection()
+            {
+                ServiceCollection serviceCollection = null;
+
+                serviceCollection.AddUoW();
+            }
+
+            Assert.That(TryCreateUnitOfWorkConnectionBuilderOnNullServiceCollection, Throws.ArgumentNullException);
+        }
+
+        [Test]
         public void If_ServiceCollection_instance_is_null_throws()
         {
             static void TryAddUoWToNullReference()

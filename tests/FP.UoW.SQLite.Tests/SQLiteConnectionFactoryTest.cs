@@ -7,9 +7,9 @@ namespace FP.UoW.SQLite.Tests
         [Test]
         public void Cannot_create_ConnectionFactory_without_a_ConnectionString()
         {
-            void CreateSQLiteDatabaseConnectionFactoryWithNullConnectionString()
+            static void CreateSQLiteDatabaseConnectionFactoryWithNullConnectionString()
             {
-                new SQLiteDatabaseConnectionFactory(null);
+                _ = new SQLiteDatabaseConnectionFactory(null);
             }
 
             Assert.That(CreateSQLiteDatabaseConnectionFactoryWithNullConnectionString, Throws.ArgumentNullException);

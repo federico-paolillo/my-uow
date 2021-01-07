@@ -1,6 +1,6 @@
 # FP.UoW
 
-An Unit of Work implementation that simplifies lifetime management of connection and transactions.  
+A Unit of Work implementation that simplifies lifetime and management of connection and transactions.
 
 ## Project overview
 

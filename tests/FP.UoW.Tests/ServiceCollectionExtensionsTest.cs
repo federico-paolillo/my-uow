@@ -17,7 +17,7 @@ namespace FP.UoW.Tests
         [Test]
         public void Cannot_create_UnitOfWorkServiceBuilder_without_a_ServiceCollection()
         {
-            void TryCreateUnitOfWorkConnectionBuilderOnNullServiceCollection()
+            static void TryCreateUnitOfWorkConnectionBuilderOnNullServiceCollection()
             {
                 ServiceCollection serviceCollection = null;
 

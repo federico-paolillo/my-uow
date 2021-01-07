@@ -7,9 +7,9 @@ namespace FP.UoW.Sql.Tests
         [Test]
         public void Cannot_create_ConnectionFactory_without_a_ConnectionString()
         {
-            void CreateSqlDatabaseConnectionFactoryWithNullConnectionString()
+            static void CreateSqlDatabaseConnectionFactoryWithNullConnectionString()
             {
-                new SqlDatabaseConnectionFactory(null);
+                _ = new SqlDatabaseConnectionFactory(null);
             }
 
             Assert.That(CreateSqlDatabaseConnectionFactoryWithNullConnectionString, Throws.ArgumentNullException);

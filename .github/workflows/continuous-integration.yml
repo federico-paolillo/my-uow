@@ -5,7 +5,7 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@latest
+        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.101'
       - name: Checkout 
@@ -17,6 +17,6 @@ jobs:
       - name: Test
         run: dotnet test --collect "XPlat Code Coverage" --settings tests.runsettings --results-directory ./codecov
       - name: Upload Codecov
-        uses: codecov/codecov-action@v1.0.13
+        uses: codecov/codecov-action@v1
         with:
           directory: ./codecov/**/*.cobertura.xml

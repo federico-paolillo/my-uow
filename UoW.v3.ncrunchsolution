@@ -1,6 +1,11 @@
 ﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
+    <MetricsExclusionList>
+      <Value>tests\FP.UoW.Sql.Tests\FP.UoW.Sql.Tests.csproj</Value>
+      <Value>tests\FP.UoW.Tests\FP.UoW.Tests.csproj</Value>
+      <Value>tests\FP.UoW.SQLite.Tests\FP.UoW.SQLite.Tests.csproj</Value>
+    </MetricsExclusionList>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
 </SolutionConfiguration>

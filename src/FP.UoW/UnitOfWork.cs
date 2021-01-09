@@ -11,10 +11,17 @@ namespace FP.UoW
     public sealed class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly IDatabaseConnectionFactory connectionFactory;
+        private readonly UnitOfWorkOptions unitOfWorkOptions;
 
-        public UnitOfWork(IDatabaseConnectionFactory connectionFactory)
+        public UnitOfWork(IDatabaseConnectionFactory connectionFactory, UnitOfWorkOptions unitOfWorkOptions)
         {
             this.connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+            this.unitOfWorkOptions = unitOfWorkOptions ?? throw new ArgumentNullException(nameof(unitOfWorkOptions));
+        }
+
+        public UnitOfWork(IDatabaseConnectionFactory connectionFactory)
+            : this(connectionFactory, UnitOfWorkOptions.Default)
+        {
         }
 
         public void Dispose()
@@ -37,8 +44,12 @@ namespace FP.UoW
         {
             if (Connection != null)
             {
-                throw new InvalidOperationException(
-                    "There is already a database connection open, you must close it before opening another one");
+                if (unitOfWorkOptions.ThrowOnMultipleConnectionsAttempts)
+                {
+                    throw new InvalidOperationException("There is already a database connection open, you must close it before opening another one");
+                }
+
+                return;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -48,8 +59,7 @@ namespace FP.UoW
 
             if (newConnection is null)
             {
-                throw new InvalidOperationException(
-                    "No DbConnection instance was created, implementation returned null");
+                throw new InvalidOperationException("No DbConnection instance was created, implementation returned null");
             }
 
             await newConnection.OpenAsync(cancellationToken)
@@ -62,16 +72,19 @@ namespace FP.UoW
         {
             if (Connection != null)
             {
-                throw new InvalidOperationException(
-                    "There is already a database connection open, you must close it before opening another one");
+                if (unitOfWorkOptions.ThrowOnMultipleConnectionsAttempts)
+                {
+                    throw new InvalidOperationException("There is already a database connection open, you must close it before opening another one");
+                }
+
+                return;
             }
 
             var newConnection = connectionFactory.MakeNew();
 
             if (newConnection is null)
             {
-                throw new InvalidOperationException(
-                    "No DbConnection instance was created, implementation returned null");
+                throw new InvalidOperationException("No DbConnection instance was created, implementation returned null");
             }
 
             newConnection.Open();
@@ -89,8 +102,7 @@ namespace FP.UoW
 
             if (Transaction != null)
             {
-                throw new InvalidOperationException(
-                    "There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
+                throw new InvalidOperationException("There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -113,8 +125,7 @@ namespace FP.UoW
 
             if (Transaction != null)
             {
-                throw new InvalidOperationException(
-                    "There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
+                throw new InvalidOperationException("There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
             }
 
             Connection.Close();
@@ -128,8 +139,12 @@ namespace FP.UoW
         {
             if (Transaction != null)
             {
-                throw new InvalidOperationException(
-                    "There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+                if (unitOfWorkOptions.ThrowOnMultipleTransactionsAttempts)
+                {
+                    throw new InvalidOperationException("There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+                }
+
+                return;
             }
 
             if (Connection is null)
@@ -150,8 +165,12 @@ namespace FP.UoW
         {
             if (Transaction != null)
             {
-                throw new InvalidOperationException(
-                    "There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+                if (unitOfWorkOptions.ThrowOnMultipleTransactionsAttempts)
+                {
+                    throw new InvalidOperationException("There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+                }
+
+                return;
             }
 
             if (Connection is null)

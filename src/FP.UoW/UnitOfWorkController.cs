@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <summary>
-    ///     Wraps an <see cref="IUnitOfWork" /> to simplify interactions with the underlying <see cref="IDatabaseSession" />
+    /// Wraps an <see cref="IUnitOfWork" /> to reduce boilerplate
     /// </summary>
     public sealed class UnitOfWorkController : IDisposable
     {

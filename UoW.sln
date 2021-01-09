@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW", "src\FP.UoW\FP.UoW.csproj", "{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{599337C8-B377-405C-BAA1-6440C8CB2FCA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Items", "00 Items", "{599337C8-B377-405C-BAA1-6440C8CB2FCA}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
@@ -21,11 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite", "src\driver
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Tests", "tests\FP.UoW.Tests\FP.UoW.Tests.csproj", "{02FDF4BF-3851-4F10-B9C7-926C6C782B9A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1E6E053C-9938-48CB-ABE3-3C5E4782A302}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Tests", "02 Tests", "{1E6E053C-9938-48CB-ABE3-3C5E4782A302}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Sql", "src\drivers\FP.UoW.SQL\FP.UoW.Sql.csproj", "{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{E24173A1-162C-4345-9911-5BA7550F46D9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Drivers", "01 Drivers", "{E24173A1-162C-4345-9911-5BA7550F46D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.DependencyInjection", "src\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj", "{454101FB-EC95-4573-8FEB-60A5A5F12099}"
 EndProject
@@ -47,6 +47,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 		.github\workflows\draft-release.yml = .github\workflows\draft-release.yml
 		.github\workflows\master-continuous-integration.yml = .github\workflows\master-continuous-integration.yml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Logging", "02 Logging", "{6A3E482B-F7D4-471E-94A7-28F592FDD042}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Logging", "src\logging\FP.UoW.Logging\FP.UoW.Logging.csproj", "{EA3450B5-9503-4072-BCF9-EDFFD1A021FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +94,10 @@ Global
 		{7D7C3321-F9E8-488A-ABE4-AC702EDC289B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D7C3321-F9E8-488A-ABE4-AC702EDC289B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D7C3321-F9E8-488A-ABE4-AC702EDC289B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA3450B5-9503-4072-BCF9-EDFFD1A021FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA3450B5-9503-4072-BCF9-EDFFD1A021FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA3450B5-9503-4072-BCF9-EDFFD1A021FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA3450B5-9503-4072-BCF9-EDFFD1A021FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +113,7 @@ Global
 		{AE6531A3-18B4-422B-99E4-F35A288F974B} = {1E6E053C-9938-48CB-ABE3-3C5E4782A302}
 		{7D7C3321-F9E8-488A-ABE4-AC702EDC289B} = {1E6E053C-9938-48CB-ABE3-3C5E4782A302}
 		{FD4D462F-A1C7-4DF9-AB1A-1D451B38FAB5} = {599337C8-B377-405C-BAA1-6440C8CB2FCA}
+		{EA3450B5-9503-4072-BCF9-EDFFD1A021FA} = {6A3E482B-F7D4-471E-94A7-28F592FDD042}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06C47C78-33AB-4295-9B8C-BCF6C134F17E}

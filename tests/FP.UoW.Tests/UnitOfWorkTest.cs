@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FP.UoW.Tests
 {
-    public sealed class UnitOfWorkAsyncTest
+    public sealed class UnitOfWorkTest
     {
         [Test]
         public async Task A_Connection_can_t_be_open_twice()

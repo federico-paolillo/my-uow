@@ -1,4 +1,5 @@
 ﻿using FP.UoW.SQLite;
+using FP.UoW.Synchronous;
 
 using Moq;
 
@@ -6,7 +7,7 @@ using NUnit.Framework;
 
 namespace FP.UoW.Tests
 {
-    public sealed class UnitOfWorkSyncTest
+    public sealed class UnitOfWorkSynchronousTest
     {
         [Test]
         public void A_Connection_can_t_be_open_twice()
@@ -14,7 +15,7 @@ namespace FP.UoW.Tests
             var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
-            using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
+            using var unitOfWork = new SynchronousUnitOfWork(sqliteDatabaseConnectionFactory);
 
             unitOfWork.OpenConnection();
 
@@ -32,7 +33,7 @@ namespace FP.UoW.Tests
             var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
-            using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
+            using var unitOfWork = new SynchronousUnitOfWork(sqliteDatabaseConnectionFactory);
 
             unitOfWork.BeginTransaction();
 
@@ -52,7 +53,7 @@ namespace FP.UoW.Tests
             brokenConnectionFactoryMock.Setup(m => m.MakeNew())
                 .Returns(value: null);
 
-            using var unitOfWork = new UnitOfWork(brokenConnectionFactoryMock.Object);
+            using var unitOfWork = new SynchronousUnitOfWork(brokenConnectionFactoryMock.Object);
 
             void TryOpenConnection()
             {
@@ -68,7 +69,7 @@ namespace FP.UoW.Tests
             var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
-            using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
+            using var unitOfWork = new SynchronousUnitOfWork(sqliteDatabaseConnectionFactory);
 
             unitOfWork.BeginTransaction();
 
@@ -86,7 +87,7 @@ namespace FP.UoW.Tests
             var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
-            using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
+            using var unitOfWork = new SynchronousUnitOfWork(sqliteDatabaseConnectionFactory);
 
             void TryRollbackTransaction()
             {
@@ -102,7 +103,7 @@ namespace FP.UoW.Tests
             var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
-            using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
+            using var unitOfWork = new SynchronousUnitOfWork(sqliteDatabaseConnectionFactory);
 
             void TryCommitTransaction()
             {
@@ -118,7 +119,7 @@ namespace FP.UoW.Tests
             var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
             var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
 
-            using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
+            using var unitOfWork = new SynchronousUnitOfWork(sqliteDatabaseConnectionFactory);
 
             void TryCloseConnection()
             {

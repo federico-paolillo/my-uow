@@ -18,11 +18,12 @@ namespace FP.UoW
             this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
             if (commitOnDispose)
             {
-                unitOfWork.CommitTransaction();
+                await unitOfWork.CommitTransactionAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
             }
         }
 

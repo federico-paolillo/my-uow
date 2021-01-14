@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.15.2" />
+    <PackageReference Include="NUnit" Version="3.13.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FP.UoW.Synchronous\FP.UoW.Synchronous.csproj" />
+    <ProjectReference Include="..\src\drivers\FP.UoW.SQLite\FP.UoW.SQLite.csproj" />
+    <ProjectReference Include="..\src\FP.UoW\FP.UoW.csproj" />
+  </ItemGroup>
+
+</Project>

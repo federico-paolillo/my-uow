@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FP.UoW.SQLite.Tests
 {
-    public sealed class SQLiteUnitOfWorkAsyncTest
+    public sealed class SQLiteUnitOfWorkTest
     {
         private string databaseFileName;
 

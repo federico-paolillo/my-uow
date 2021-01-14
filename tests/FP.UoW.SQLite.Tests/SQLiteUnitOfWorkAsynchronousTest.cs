@@ -12,7 +12,7 @@ using System.IO;
 
 namespace FP.UoW.SQLite.Tests
 {
-    public sealed class SQLiteUnitOfWorkSyncTest
+    public sealed class SQLiteUnitOfWorkAsynchronousTest
     {
         private string databaseFileName;
 

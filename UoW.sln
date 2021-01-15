@@ -10,11 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Items", "00 Items", "{59
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		ci.runsettings = ci.runsettings
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		global.json = global.json
 		LICENSE = LICENSE
 		README.md = README.md
-		tests.runsettings = tests.runsettings
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite", "src\drivers\FP.UoW.SQLite\FP.UoW.SQLite.csproj", "{BC969773-89DA-4CB5-BA36-63E03C7FA613}"

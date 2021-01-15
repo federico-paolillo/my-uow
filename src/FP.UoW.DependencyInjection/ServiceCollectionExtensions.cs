@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using FP.UoW.Synchronous;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using System;
 
@@ -8,8 +9,8 @@ namespace FP.UoW.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds an Unit of Work to the <see cref="IServiceCollection" /> specified
-        /// The Unit of Work will use a <see cref="ServiceLifetime.Scoped" /> lifetime
+        /// Adds an Unit of Work to the <see cref="IServiceCollection" /> specified.
+        /// The Unit of Work will use a <see cref="ServiceLifetime.Scoped" /> lifetime.
         /// </summary>
         public static UnitOfWorkServiceBuilder AddUoW(this IServiceCollection services)
         {
@@ -27,17 +28,22 @@ namespace FP.UoW.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a Synchronous Unit of Work to the <see cref="IServiceCollection"/> specified.
+        /// Adds the Synchronous variant of the Unit of Work.
         /// The Synchronous Unit Of Work will use a <see cref="ServiceLifetime.Scoped"/> lifetime.
         /// </summary>
-        public static UnitOfWorkServiceBuilder AddSynchronousUoW(this IServiceCollection services)
+        public static UnitOfWorkServiceBuilder AddSynchronousImplementation(this UnitOfWorkServiceBuilder uowBuilder)
         {
-            if (services is null)
+            if (uowBuilder is null)
             {
-                throw new ArgumentNullException(nameof(services));
+                throw new ArgumentNullException(nameof(uowBuilder));
             }
 
-            services.
+            uowBuilder.ServiceCollection.AddScoped<SynchronousUnitOfWork>();
+
+            uowBuilder.ServiceCollection.AddScoped<ISynchronousUnitOfWork>(sp => sp.GetRequiredService<SynchronousUnitOfWork>());
+            uowBuilder.ServiceCollection.AddScoped<ISynchronousDatabaseSession>(sp => sp.GetRequiredService<SynchronousUnitOfWork>());
+
+            return uowBuilder;
         }
     }
 }

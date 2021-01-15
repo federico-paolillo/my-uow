@@ -3,6 +3,7 @@ using Dapper;
 using FP.UoW.DependencyInjection;
 using FP.UoW.SQLite.DependencyInjection;
 using FP.UoW.SQLite.Tests.Infrastructure;
+using FP.UoW.Synchronous;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +23,7 @@ namespace FP.UoW.SQLite.Tests
 
         private IServiceScope serviceScope;
 
-        private IUnitOfWork unitOfWork;
+        private ISynchronousUnitOfWork unitOfWork;
 
         [SetUp]
         public void Setup()
@@ -33,12 +34,13 @@ namespace FP.UoW.SQLite.Tests
 
             serviceProvider = new ServiceCollection()
                 .AddUoW()
+                .AddSynchronousImplementation()
                 .ForSQLite(databaseConnectionString)
                 .BuildServiceProvider();
 
             serviceScope = serviceProvider.CreateScope();
 
-            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<ISynchronousUnitOfWork>();
 
             randomModel = TestModel.Random();
         }

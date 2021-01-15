@@ -3,7 +3,7 @@
 namespace FP.UoW.Synchronous
 {
     /// <summary>
-    /// Wraps an <see cref="ISynchronousUnitOfWork"/> to reduce boilerplate.
+    /// Wraps an <see cref="ISynchronousUnitOfWork"/> to reduce usage boilerplate.
     /// </summary>
     public sealed class SynchronousUnitOfWorkController : IDisposable
     {
@@ -17,7 +17,7 @@ namespace FP.UoW.Synchronous
         }
 
         /// <summary>
-        /// Rollback the underlying <see cref="ISynchronousUnitOfWork"/>
+        /// Rollback the underlying <see cref="ISynchronousUnitOfWork"/>.
         /// </summary>
         public void Abort()
         {
@@ -35,10 +35,10 @@ namespace FP.UoW.Synchronous
         }
 
         /// <summary>
-        /// Wraps a <see cref="ISynchronousUnitOfWork"/> and returns a <see cref="SynchronousUnitOfWorkController"/>
+        /// Wraps a <see cref="ISynchronousUnitOfWork"/> and returns a <see cref="SynchronousUnitOfWorkController"/>.
         /// </summary>
-        /// <param name="unitOfWork">The <see cref="ISynchronousUnitOfWork"/> to wrap</param>
-        /// <returns>A new <see cref="SynchronousUnitOfWorkController"/> that controls the <see cref="ISynchronousUnitOfWork"/> given</returns>
+        /// <param name="unitOfWork">The <see cref="ISynchronousUnitOfWork"/> to wrap.</param>
+        /// <returns>A new <see cref="SynchronousUnitOfWorkController"/> that controls the <see cref="ISynchronousUnitOfWork"/> given.</returns>
         public static SynchronousUnitOfWorkController Wrap(ISynchronousUnitOfWork unitOfWork)
         {
             if (unitOfWork is null)

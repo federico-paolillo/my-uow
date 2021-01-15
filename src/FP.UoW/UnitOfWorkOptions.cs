@@ -1,7 +1,9 @@
-﻿namespace FP.UoW
+﻿using FP.UoW.Synchronous;
+
+namespace FP.UoW
 {
     /// <summary>
-    /// Options that configure the <see cref="IUnitOfWork"/> behavior
+    /// Options that configure <see cref="IUnitOfWork"/> and <see cref="ISynchronousUnitOfWork"/> behavior.
     /// </summary>
     public sealed class UnitOfWorkOptions
     {

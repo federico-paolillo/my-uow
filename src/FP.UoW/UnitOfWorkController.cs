@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <summary>
-    /// Wraps an <see cref="IUnitOfWork" /> to reduce boilerplate
+    /// Wraps an <see cref="IUnitOfWork" /> to reduce boilerplate.
     /// </summary>
     public sealed class UnitOfWorkController : IDisposable
     {
@@ -28,7 +28,7 @@ namespace FP.UoW
         }
 
         /// <summary>
-        ///     Rollback the underlying Unit of Work
+        /// Rollback the underlying Unit of Work.
         /// </summary>
         public async Task AbortAsync(CancellationToken cancellationToken = default)
         {
@@ -39,10 +39,10 @@ namespace FP.UoW
         }
 
         /// <summary>
-        ///     Wraps the <see cref="IUnitOfWork" /> provided and returns a new <see cref="UnitOfWorkController" />
+        /// Wraps the <see cref="IUnitOfWork" /> provided and returns a new <see cref="UnitOfWorkController" />.
         /// </summary>
-        /// <param name="unitOfWorkToWrap">The <see cref="IUnitOfWork" /> to wrap</param>
-        /// <returns>A new <see cref="UnitOfWorkController" /> controlling the <see cref="IUnitOfWork" /></returns>
+        /// <param name="unitOfWorkToWrap">The <see cref="IUnitOfWork" /> to wrap.</param>
+        /// <returns>A new <see cref="UnitOfWorkController" /> controlling the <see cref="IUnitOfWork" />.</returns>
         public static async Task<UnitOfWorkController> WrapAsync(IUnitOfWork unitOfWorkToWrap)
         {
             if (unitOfWorkToWrap == null)

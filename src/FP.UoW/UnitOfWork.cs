@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <summary>
-    ///     Implementation of an Unit of Work
+    /// Implementation of an Unit of Work.
     /// </summary>
     public sealed class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly IDatabaseConnectionFactory connectionFactory;
+
         private readonly UnitOfWorkOptionsProviderFunc unitOfWorkOptionsProvider;
 
         public UnitOfWork(IDatabaseConnectionFactory connectionFactory, UnitOfWorkOptionsProviderFunc unitOfWorkOptionsProvider)
@@ -37,6 +38,7 @@ namespace FP.UoW
             Transaction = null;
             Connection = null;
         }
+
         private UnitOfWorkOptions UnitOfWorkOptions => unitOfWorkOptionsProvider();
 
         /// <inheritdoc />

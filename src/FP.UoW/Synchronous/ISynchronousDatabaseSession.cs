@@ -1,11 +1,11 @@
 ﻿using System.Data.Common;
 
-namespace FP.UoW
+namespace FP.UoW.Synchronous
 {
     /// <summary>
-    /// A database session. Contains the <see cref="DbConnection"/> and <see cref="DbTransaction" /> currently controlled by the Unit of Work.
+    /// A database session. Contains the <see cref="DbConnection"/> and <see cref="DbTransaction" /> currently controlled by the Synchronous Unit of Work.
     /// </summary>
-    public interface IDatabaseSession
+    public interface ISynchronousDatabaseSession
     {
         /// <summary>
         /// Current connection.

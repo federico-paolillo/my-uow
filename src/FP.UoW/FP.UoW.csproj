@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net5.0</TargetFrameworks>
+	<LangVersion>9.0</LangVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
@@ -14,7 +15,7 @@
     <PackageProjectUrl>https://github.com/federico-paolillo/my-uow</PackageProjectUrl>
     <PackageTags>database, transaction, unitofwork, unitofworkpattern</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Description>A Unit of Work implementation that simplifies lifetime and management of connection and transactions.</Description>
+    <Description>A Unit of Work implementation that automates lifetime and management of database connections and transactions.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

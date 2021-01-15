@@ -3,13 +3,12 @@
 using FP.UoW.DependencyInjection;
 using FP.UoW.Sql.DependencyInjection;
 using FP.UoW.Sql.Tests.Infrastructure;
+using FP.UoW.Synchronous;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
-
-using System.Threading.Tasks;
 
 namespace FP.UoW.Sql.Tests
 {
@@ -23,172 +22,148 @@ namespace FP.UoW.Sql.Tests
 
         private IServiceScope serviceScope;
 
-        private IUnitOfWork unitOfWork;
+        private ISynchronousUnitOfWork unitOfWork;
 
         [SetUp]
-        public async Task Setup()
+        public void Setup()
         {
             databaseName = Randomness.DatabaseName();
 
-            await CreateDatabaseAsync()
-                .ConfigureAwait(false);
+            CreateDatabase();
 
             var databaseConnectionString =
                 $@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true; Initial Catalog = {databaseName}";
 
             serviceProvider = new ServiceCollection()
                 .AddUoW()
+                .AddSynchronousImplementation()
                 .ForSql(databaseConnectionString)
                 .BuildServiceProvider();
 
             serviceScope = serviceProvider.CreateScope();
 
-            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<ISynchronousUnitOfWork>();
 
             randomModel = TestModel.Random();
         }
 
         [TearDown]
-        public async Task TearDown()
+        public void TearDown()
         {
+            unitOfWork?.Dispose();
             serviceScope?.Dispose();
             serviceProvider?.Dispose();
 
-            await DropDatabaseAsync()
-                .ConfigureAwait(false);
+            DropDatabase();
         }
 
         [Test]
-        public async Task Reads_and_writes_from_Sql()
+        public void Reads_and_writes_from_Sql()
         {
-            await unitOfWork.BeginTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.BeginTransaction();
 
-            await CreateTableAsync()
-                .ConfigureAwait(false);
+            CreateTable();
 
-            await InsertTestModelRowAsync()
-                .ConfigureAwait(false);
+            InsertTestModelRow();
 
-            await AssertCanReadTestModelRowAsync()
-                .ConfigureAwait(false);
+            AssertCanReadTestModelRow();
 
-            await unitOfWork.CommitTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.CommitTransaction();
         }
 
         [Test]
-        public async Task Writes_to_Sql_can_be_rolled_back()
+        public void Writes_to_Sql_can_be_rolled_back()
         {
             //Step 1
 
-            await unitOfWork.BeginTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.BeginTransaction();
 
-            await CreateTableAsync()
-                .ConfigureAwait(false);
+            CreateTable();
 
-            await unitOfWork.CommitTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.CommitTransaction();
 
             //Step 2
 
-            await unitOfWork.BeginTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.BeginTransaction();
 
-            await InsertRandomTestModelRowAsync()
-                .ConfigureAwait(false);
+            InsertRandomTestModelRow();
 
-            await InsertRandomTestModelRowAsync()
-                .ConfigureAwait(false);
+            InsertRandomTestModelRow();
 
-            await unitOfWork.RollbackTransactionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.RollbackTransaction();
 
             //Step 3
 
-            await unitOfWork.OpenConnectionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.OpenConnection();
 
-            await AssertNoTestModelRowsAsync()
-                .ConfigureAwait(false);
+            AssertNoTestModelRows();
 
-            await unitOfWork.CloseConnectionAsync()
-                .ConfigureAwait(false);
+            unitOfWork.CloseConnection();
         }
 
-        private async Task AssertNoTestModelRowsAsync()
+        private void AssertNoTestModelRows()
         {
-            var count = await unitOfWork.Connection.ExecuteScalarAsync<int>(@"
+            var count = unitOfWork.Connection.ExecuteScalar<int>(@"
                 SELECT COUNT(*) FROM TestModels;
-            ", transaction: unitOfWork.Transaction)
-                .ConfigureAwait(false);
+            ", transaction: unitOfWork.Transaction);
 
             Assert.That(count, Is.Zero);
         }
 
-        private async Task InsertRandomTestModelRowAsync()
+        private void InsertRandomTestModelRow()
         {
             var someRandomTestModel = TestModel.Random();
 
-            await unitOfWork.Connection.ExecuteAsync(@"
+            unitOfWork.Connection.Execute(@"
                     INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES(@Id, @ColumnOne, @ColumnTwo);
-                ", transaction: unitOfWork.Transaction, param: someRandomTestModel)
-                .ConfigureAwait(false);
+                ", transaction: unitOfWork.Transaction, param: someRandomTestModel);
         }
 
-        private async Task CreateTableAsync()
+        private void CreateTable()
         {
-            await unitOfWork.Connection.ExecuteAsync(@"
+            unitOfWork.Connection.Execute(@"
                 CREATE TABLE TestModels(
                     Id INT PRIMARY KEY,
                     ColumnOne NVARCHAR(MAX) NOT NULL,
                     ColumnTwo NVARCHAR(MAX) NOT NULL
-                );", transaction: unitOfWork.Transaction)
-                .ConfigureAwait(false);
+                );", transaction: unitOfWork.Transaction);
         }
 
-        private async Task InsertTestModelRowAsync()
+        private void InsertTestModelRow()
         {
-            await unitOfWork.Connection.ExecuteAsync(@"
+            unitOfWork.Connection.Execute(@"
                     INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES(@Id, @ColumnOne, @ColumnTwo);
-                ", transaction: unitOfWork.Transaction, param: randomModel)
-                .ConfigureAwait(false);
+                ", transaction: unitOfWork.Transaction, param: randomModel);
         }
 
-        private async Task AssertCanReadTestModelRowAsync()
+        private void AssertCanReadTestModelRow()
         {
-            var testModel = await unitOfWork.Connection.QuerySingleOrDefaultAsync<TestModel>(@"
+            var testModel = unitOfWork.Connection.QuerySingleOrDefault<TestModel>(@"
                     SELECT * FROM TestModels WHERE Id = @Id;
-                ", transaction: unitOfWork.Transaction, param: randomModel)
-                .ConfigureAwait(false);
+                ", transaction: unitOfWork.Transaction, param: randomModel);
 
             Assert.That(testModel.Id, Is.EqualTo(randomModel.Id));
             Assert.That(testModel.ColumnOne, Is.EqualTo(randomModel.ColumnOne));
             Assert.That(testModel.ColumnTwo, Is.EqualTo(randomModel.ColumnTwo));
         }
 
-        private async Task DropDatabaseAsync()
+        private void DropDatabase()
         {
-            await using var connection =
+            using var connection =
                 new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
 
             //Drop any pending Connections
 
-            await connection.ExecuteAsync($@"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;")
-                .ConfigureAwait(false);
-
-            await connection.ExecuteAsync($@"DROP DATABASE [{databaseName}]; ")
-                .ConfigureAwait(false);
+            connection.Execute($@"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;");
+            connection.Execute($@"DROP DATABASE [{databaseName}];");
         }
 
-        private async Task CreateDatabaseAsync()
+        private void CreateDatabase()
         {
-            await using var connection =
+            using var connection =
                 new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
 
-            await connection.ExecuteAsync($@"CREATE DATABASE [{databaseName}];")
-                .ConfigureAwait(false);
+            connection.Execute($@"CREATE DATABASE [{databaseName}];");
         }
     }
 }

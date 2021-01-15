@@ -46,6 +46,7 @@ namespace FP.UoW.Synchronous
             Connection = null;
         }
 
+        /// <inheritdoc />
         public void OpenConnection()
         {
             if (Connection != null)
@@ -70,6 +71,7 @@ namespace FP.UoW.Synchronous
             Connection = newConnection;
         }
 
+        /// <inheritdoc />
         public void CloseConnection()
         {
             if (Connection is null)
@@ -88,7 +90,7 @@ namespace FP.UoW.Synchronous
             Connection = null;
         }
 
-
+        /// <inheritdoc />
         public void BeginTransaction()
         {
             if (Transaction != null)
@@ -111,6 +113,7 @@ namespace FP.UoW.Synchronous
             Transaction = newTransaction;
         }
 
+        /// <inheritdoc />
         public void CommitTransaction()
         {
             if (Transaction is null)
@@ -126,6 +129,7 @@ namespace FP.UoW.Synchronous
             CloseConnection();
         }
 
+        /// <inheritdoc />
         public void RollbackTransaction()
         {
             if (Transaction is null)

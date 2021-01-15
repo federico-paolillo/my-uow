@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
+using System.Threading.Tasks;
+
 namespace FP.UoW.Sql.Tests
 {
     public sealed class SqlUnitOfWorkTest
@@ -21,14 +23,15 @@ namespace FP.UoW.Sql.Tests
 
         private IServiceScope serviceScope;
 
-        private UnitOfWork unitOfWork;
+        private IUnitOfWork unitOfWork;
 
         [SetUp]
-        public void Setup()
+        public async Task Setup()
         {
             databaseName = Randomness.DatabaseName();
 
-            CreateDatabase();
+            await CreateDatabaseAsync()
+                .ConfigureAwait(false);
 
             var databaseConnectionString =
                 $@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true; Initial Catalog = {databaseName}";
@@ -40,128 +43,152 @@ namespace FP.UoW.Sql.Tests
 
             serviceScope = serviceProvider.CreateScope();
 
-            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<UnitOfWork>();
+            unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
             randomModel = TestModel.Random();
         }
 
         [TearDown]
-        public void TearDown()
+        public async Task TearDown()
         {
-            unitOfWork?.Dispose();
             serviceScope?.Dispose();
             serviceProvider?.Dispose();
 
-            DropDatabase();
+            await DropDatabaseAsync()
+                .ConfigureAwait(false);
         }
 
         [Test]
-        public void Reads_and_writes_from_Sql()
+        public async Task Reads_and_writes_from_Sql()
         {
-            unitOfWork.BeginTransaction();
+            await unitOfWork.BeginTransactionAsync()
+                .ConfigureAwait(false);
 
-            CreateTable();
+            await CreateTableAsync()
+                .ConfigureAwait(false);
 
-            InsertTestModelRow();
+            await InsertTestModelRowAsync()
+                .ConfigureAwait(false);
 
-            AssertCanReadTestModelRow();
+            await AssertCanReadTestModelRowAsync()
+                .ConfigureAwait(false);
 
-            unitOfWork.CommitTransaction();
+            await unitOfWork.CommitTransactionAsync()
+                .ConfigureAwait(false);
         }
 
         [Test]
-        public void Writes_to_Sql_can_be_rolled_back()
+        public async Task Writes_to_Sql_can_be_rolled_back()
         {
             //Step 1
 
-            unitOfWork.BeginTransaction();
+            await unitOfWork.BeginTransactionAsync()
+                .ConfigureAwait(false);
 
-            CreateTable();
+            await CreateTableAsync()
+                .ConfigureAwait(false);
 
-            unitOfWork.CommitTransaction();
+            await unitOfWork.CommitTransactionAsync()
+                .ConfigureAwait(false);
 
             //Step 2
 
-            unitOfWork.BeginTransaction();
+            await unitOfWork.BeginTransactionAsync()
+                .ConfigureAwait(false);
 
-            InsertRandomTestModelRow();
+            await InsertRandomTestModelRowAsync()
+                .ConfigureAwait(false);
 
-            InsertRandomTestModelRow();
+            await InsertRandomTestModelRowAsync()
+                .ConfigureAwait(false);
 
-            unitOfWork.RollbackTransaction();
+            await unitOfWork.RollbackTransactionAsync()
+                .ConfigureAwait(false);
 
             //Step 3
 
-            unitOfWork.OpenConnection();
+            await unitOfWork.OpenConnectionAsync()
+                .ConfigureAwait(false);
 
-            AssertNoTestModelRows();
+            await AssertNoTestModelRowsAsync()
+                .ConfigureAwait(false);
 
-            unitOfWork.CloseConnection();
+            await unitOfWork.CloseConnectionAsync()
+                .ConfigureAwait(false);
         }
 
-        private void AssertNoTestModelRows()
+        private async Task AssertNoTestModelRowsAsync()
         {
-            var count = unitOfWork.Connection.ExecuteScalar<int>(@"
+            var count = await unitOfWork.Connection.ExecuteScalarAsync<int>(@"
                 SELECT COUNT(*) FROM TestModels;
-            ", transaction: unitOfWork.Transaction);
+            ", transaction: unitOfWork.Transaction)
+                .ConfigureAwait(false);
 
             Assert.That(count, Is.Zero);
         }
 
-        private void InsertRandomTestModelRow()
+        private async Task InsertRandomTestModelRowAsync()
         {
             var someRandomTestModel = TestModel.Random();
 
-            unitOfWork.Connection.Execute(@"
+            await unitOfWork.Connection.ExecuteAsync(@"
                     INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES(@Id, @ColumnOne, @ColumnTwo);
-                ", transaction: unitOfWork.Transaction, param: someRandomTestModel);
+                ", transaction: unitOfWork.Transaction, param: someRandomTestModel)
+                .ConfigureAwait(false);
         }
 
-        private void CreateTable()
+        private async Task CreateTableAsync()
         {
-            unitOfWork.Connection.Execute(@"
+            await unitOfWork.Connection.ExecuteAsync(@"
                 CREATE TABLE TestModels(
                     Id INT PRIMARY KEY,
                     ColumnOne NVARCHAR(MAX) NOT NULL,
                     ColumnTwo NVARCHAR(MAX) NOT NULL
-                );", transaction: unitOfWork.Transaction);
+                );", transaction: unitOfWork.Transaction)
+                .ConfigureAwait(false);
         }
 
-        private void InsertTestModelRow()
+        private async Task InsertTestModelRowAsync()
         {
-            unitOfWork.Connection.Execute(@"
+            await unitOfWork.Connection.ExecuteAsync(@"
                     INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES(@Id, @ColumnOne, @ColumnTwo);
-                ", transaction: unitOfWork.Transaction, param: randomModel);
+                ", transaction: unitOfWork.Transaction, param: randomModel)
+                .ConfigureAwait(false);
         }
 
-        private void AssertCanReadTestModelRow()
+        private async Task AssertCanReadTestModelRowAsync()
         {
-            var testModel = unitOfWork.Connection.QuerySingleOrDefault<TestModel>(@"
+            var testModel = await unitOfWork.Connection.QuerySingleOrDefaultAsync<TestModel>(@"
                     SELECT * FROM TestModels WHERE Id = @Id;
-                ", transaction: unitOfWork.Transaction, param: randomModel);
+                ", transaction: unitOfWork.Transaction, param: randomModel)
+                .ConfigureAwait(false);
 
             Assert.That(testModel.Id, Is.EqualTo(randomModel.Id));
             Assert.That(testModel.ColumnOne, Is.EqualTo(randomModel.ColumnOne));
             Assert.That(testModel.ColumnTwo, Is.EqualTo(randomModel.ColumnTwo));
         }
 
-        private void DropDatabase()
+        private async Task DropDatabaseAsync()
         {
-            using var connection =
+            await using var connection =
                 new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
 
             //Drop any pending Connections
 
-            connection.Execute($@"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;");
-            connection.Execute($@"DROP DATABASE [{databaseName}];");
+            await connection.ExecuteAsync($@"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;")
+                .ConfigureAwait(false);
+
+            await connection.ExecuteAsync($@"DROP DATABASE [{databaseName}]; ")
+                .ConfigureAwait(false);
         }
 
-        private void CreateDatabase()
+        private async Task CreateDatabaseAsync()
         {
-            using var connection =
+            await using var connection =
                 new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
 
-            connection.Execute($@"CREATE DATABASE [{databaseName}];");
+            await connection.ExecuteAsync($@"CREATE DATABASE [{databaseName}];")
+                .ConfigureAwait(false);
         }
     }
 }

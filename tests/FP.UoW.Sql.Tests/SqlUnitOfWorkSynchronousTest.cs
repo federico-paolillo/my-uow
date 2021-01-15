@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FP.UoW.Sql.Tests
 {
-    public sealed class SqlUnitOfWorkAsyncTest
+    public sealed class SqlUnitOfWorkSynchronousTest
     {
         private string databaseName;
 

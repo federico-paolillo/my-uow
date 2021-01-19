@@ -19,6 +19,6 @@ jobs:
       - name: Upload Codecov
         uses: codecov/codecov-action@v1
         with:
-          directory: ./FP.UoW-Codecov/**/coverage.info
-          fail-ci-if-error: true
+          file: ./FP.UoW-Codecov/**/coverage.info
+          fail_ci_if_error: true
           name: FP.UoW-CI

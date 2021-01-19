@@ -37,13 +37,23 @@ namespace FP.UoW.Synchronous
         /// <inheritdoc />
         public DbTransaction Transaction { get; private set; }
 
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Transaction?.Dispose();
+                Connection?.Dispose();
+
+                Transaction = null;
+                Connection = null;
+            }
+        }
+
         public void Dispose()
         {
-            Transaction?.Dispose();
-            Connection?.Dispose();
+            Dispose(true);
 
-            Transaction = null;
-            Connection = null;
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc />

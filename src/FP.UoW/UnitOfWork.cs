@@ -8,7 +8,7 @@ namespace FP.UoW
     /// <summary>
     /// Implementation of an Unit of Work.
     /// </summary>
-    public sealed class UnitOfWork : IUnitOfWork, IDisposable
+    public sealed class UnitOfWork : IUnitOfWork, IDisposable, IAsyncDisposable
     {
         private readonly IDatabaseConnectionFactory connectionFactory;
 
@@ -30,13 +30,50 @@ namespace FP.UoW
         {
         }
 
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Transaction?.Dispose();
+                Connection?.Dispose();
+
+                Transaction = null;
+                Connection = null;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (Transaction is not null)
+            {
+                await Transaction.DisposeAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+            }
+
+            if (Connection is not null)
+            {
+                await Connection.DisposeAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+            }
+
+            Connection = null;
+            Transaction = null;
+
+            Dispose(false);
+
+#pragma warning disable CA1816
+
+            // This is a DisposeAsync method, therefore SuppressFinalize call is appropriate in this context
+            GC.SuppressFinalize(this);
+
+#pragma warning restore CA1816 
+        }
+
         public void Dispose()
         {
-            Transaction?.Dispose();
-            Connection?.Dispose();
+            Dispose(true);
 
-            Transaction = null;
-            Connection = null;
+            GC.SuppressFinalize(this);
         }
 
         private UnitOfWorkOptions UnitOfWorkOptions => unitOfWorkOptionsProvider();

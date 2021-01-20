@@ -15,7 +15,6 @@
     <PackageTags>database, transaction, unitofwork, unitofworkpattern</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>FP.UoW.SQLite integration for Microsoft.Extensions.DependencyInjection</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

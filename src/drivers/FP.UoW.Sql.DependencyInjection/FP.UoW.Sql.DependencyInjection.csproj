@@ -15,7 +15,6 @@
     <PackageTags>database, transaction, unitofwork, unitofworkpattern</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>FP.UoW.Sql integration for Micrososft.Extensions.DependencyInjection</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

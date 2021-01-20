@@ -15,7 +15,6 @@
     <PackageTags>database, transaction, unitofwork, unitofworkpattern</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>Microsoft SQL Server bindings for FP.UoW</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

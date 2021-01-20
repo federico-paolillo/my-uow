@@ -16,7 +16,6 @@
     <PackageTags>database, transaction, unitofwork, unitofworkpattern</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>A Unit of Work implementation that automates lifetime and management of database connections and transactions.</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

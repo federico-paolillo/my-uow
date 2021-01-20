@@ -26,7 +26,7 @@ jobs:
           fail_ci_if_error: true
           name: FP.UoW-CI
       - name: Package FP.UoW solution
-        run: dotnet pack --configuration Release --output ${{github.workspace}}/nupkgs
+        run: dotnet pack --configuration Release --output .\nupkgs
       - name: Release
         uses: actions/create-release@v1
         env:
@@ -42,8 +42,8 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         # See: https://ss64.com/bash/find.html - https://github.com/actions/upload-release-asset/issues/28 - https://unix.stackexchange.com/questions/15308/how-to-use-find-command-to-search-for-multiple-extensions
         # ${GITHUB_REF##*/} is removing a long prefix of */ leaving only the remainder of the tag
-        run: hub release edit $(find ${{github.workspace}}/nupkgs -type f \( -name "*.nupkg" -o -name "*.snupkg" \) -printf "-a %p") ${GITHUB_REF##*/}
+        run: hub release edit $(find ./nupkgs -type f \( -name "*.nupkg" -o -name "*.snupkg" \) -printf "-a %p") ${GITHUB_REF##*/}
         shell: bash
       - name: Publish to NuGet
-        run: dotnet nuget push ${{github.workspace}}/nupkgs --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push .\nupkgs --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
           

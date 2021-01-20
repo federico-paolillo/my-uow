@@ -1,4 +1,5 @@
 ﻿using FP.UoW.DependencyInjection;
+using FP.UoW.Synchronous;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,25 +29,36 @@ namespace FP.UoW.Tests
         }
 
         [Test]
-        public void If_ServiceCollection_instance_is_null_throws()
+        public void If_ServiceCollection_instance_is_null_AddUow_throws()
         {
             static void TryAddUoWToNullReference()
             {
-                ServiceCollectionExtensions.AddUoW(null);
+                _ = ServiceCollectionExtensions.AddUoW(null);
             }
 
             Assert.That(TryAddUoWToNullReference, Throws.ArgumentNullException);
         }
 
-        [TestCaseSource(typeof(ServiceLifetimesTestData), nameof(ServiceLifetimesTestData.Lifetimes))]
+        [Test]
+        public void If_UnitOfWorkServiceBuilder_instance_is_null_AddSynchronousImplementation_throws()
+        {
+            static void TryAddSynchronousImplementationToNullReference()
+            {
+                _ = ServiceCollectionExtensions.AddSynchronousImplementation(null);
+            }
+
+            Assert.That(TryAddSynchronousImplementationToNullReference, Throws.ArgumentNullException);
+        }
+
+        [TestCaseSource(typeof(ServiceLifetimesTestDataForAsynchronousImplementation), nameof(ServiceLifetimesTestDataForAsynchronousImplementation.Lifetimes))]
         public void Services_are_registered_as_expected(Type service, ServiceLifetime lifetime)
         {
             var serviceCollection = new ServiceCollection();
 
             serviceCollection.AddUoW();
 
-            var hasRegistration = serviceCollection.Any(descriptor =>
-                descriptor.ServiceType == service && descriptor.Lifetime == lifetime);
+            var hasRegistration = serviceCollection
+                .Any(descriptor => descriptor.ServiceType == service && descriptor.Lifetime == lifetime);
 
             Assert.That(hasRegistration, Is.True);
         }
@@ -58,7 +70,7 @@ namespace FP.UoW.Tests
 
             var serviceCollection = new ServiceCollection();
 
-            //Add Mocked IDatabaseConnectionFactory to ensure that services can indeed be registered
+            //Add Mocked IDatabaseConnectionFactory to ensure that services can be registered
             serviceCollection.AddSingleton(databaseConnectionFactoryMock.Object);
             serviceCollection.AddUoW();
 
@@ -73,9 +85,48 @@ namespace FP.UoW.Tests
             Assert.That(unitOfWork, Is.Not.Null);
             Assert.That(unitOfWorkInterface, Is.Not.Null);
         }
+
+        [Test]
+        public void Synchronous_services_can_be_resolved()
+        {
+            var databaseConnectionFactoryMock = new Mock<IDatabaseConnectionFactory>();
+
+            var serviceCollection = new ServiceCollection();
+
+            //Add Mocked IDatabaseConnectionFactory to ensure that services can be registered
+            serviceCollection.AddSingleton(databaseConnectionFactoryMock.Object);
+
+            serviceCollection.AddUoW()
+                .AddSynchronousImplementation();
+
+            using var serviceProvider = serviceCollection.BuildServiceProvider();
+            using var serviceScope = serviceProvider.CreateScope();
+
+            var databaseSession = serviceScope.ServiceProvider.GetRequiredService<ISynchronousDatabaseSession>();
+            var unitOfWork = serviceScope.ServiceProvider.GetRequiredService<SynchronousUnitOfWork>();
+            var unitOfWorkInterface = serviceScope.ServiceProvider.GetRequiredService<ISynchronousUnitOfWork>();
+
+            Assert.That(databaseSession, Is.Not.Null);
+            Assert.That(unitOfWork, Is.Not.Null);
+            Assert.That(unitOfWorkInterface, Is.Not.Null);
+        }
+
+        [TestCaseSource(typeof(ServiceLifetimesTestDataForSynchronousImplementation), nameof(ServiceLifetimesTestDataForSynchronousImplementation.Lifetimes))]
+        public void Synchronous_services_are_registered_as_expected(Type service, ServiceLifetime lifetime)
+        {
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddUoW()
+                .AddSynchronousImplementation();
+
+            var hasRegistration = serviceCollection
+                .Any(descriptor => descriptor.ServiceType == service && descriptor.Lifetime == lifetime);
+
+            Assert.That(hasRegistration, Is.True);
+        }
     }
 
-    internal sealed class ServiceLifetimesTestData
+    internal sealed class ServiceLifetimesTestDataForAsynchronousImplementation
     {
         public static IEnumerable Lifetimes
         {
@@ -87,4 +138,18 @@ namespace FP.UoW.Tests
             }
         }
     }
+
+    internal sealed class ServiceLifetimesTestDataForSynchronousImplementation
+    {
+        public static IEnumerable Lifetimes
+        {
+            get
+            {
+                yield return new TestCaseData(typeof(SynchronousUnitOfWork), ServiceLifetime.Scoped);
+                yield return new TestCaseData(typeof(ISynchronousUnitOfWork), ServiceLifetime.Scoped);
+                yield return new TestCaseData(typeof(ISynchronousDatabaseSession), ServiceLifetime.Scoped);
+            }
+        }
+    }
+
 }

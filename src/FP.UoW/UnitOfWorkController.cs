@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <summary>
-    ///     Wraps an <see cref="IUnitOfWork" /> to simplify interactions with the underlying <see cref="IDatabaseSession" />
+    /// Wraps an <see cref="IUnitOfWork" /> to reduce boilerplate.
     /// </summary>
     public sealed class UnitOfWorkController : IDisposable
     {
@@ -18,16 +18,17 @@ namespace FP.UoW
             this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
             if (commitOnDispose)
             {
-                unitOfWork.CommitTransaction();
+                await unitOfWork.CommitTransactionAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
             }
         }
 
         /// <summary>
-        ///     Rollback the underlying Unit of Work
+        /// Rollback the underlying Unit of Work.
         /// </summary>
         public async Task AbortAsync(CancellationToken cancellationToken = default)
         {
@@ -38,10 +39,10 @@ namespace FP.UoW
         }
 
         /// <summary>
-        ///     Wraps the <see cref="IUnitOfWork" /> provided and returns a new <see cref="UnitOfWorkController" />
+        /// Wraps the <see cref="IUnitOfWork" /> provided and returns a new <see cref="UnitOfWorkController" />.
         /// </summary>
-        /// <param name="unitOfWorkToWrap">The <see cref="IUnitOfWork" /> to wrap</param>
-        /// <returns>A new <see cref="UnitOfWorkController" /> controlling the <see cref="IUnitOfWork" /></returns>
+        /// <param name="unitOfWorkToWrap">The <see cref="IUnitOfWork" /> to wrap.</param>
+        /// <returns>A new <see cref="UnitOfWorkController" /> controlling the <see cref="IUnitOfWork" />.</returns>
         public static async Task<UnitOfWorkController> WrapAsync(IUnitOfWork unitOfWorkToWrap)
         {
             if (unitOfWorkToWrap == null)

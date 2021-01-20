@@ -6,25 +6,77 @@ using System.Threading.Tasks;
 namespace FP.UoW
 {
     /// <summary>
-    ///     Implementation of an Unit of Work
+    /// Implementation of an Unit of Work.
     /// </summary>
-    public sealed class UnitOfWork : IUnitOfWork, IDisposable
+    public sealed class UnitOfWork : IUnitOfWork, IDisposable, IAsyncDisposable
     {
         private readonly IDatabaseConnectionFactory connectionFactory;
 
-        public UnitOfWork(IDatabaseConnectionFactory connectionFactory)
+        private readonly UnitOfWorkOptionsProviderFunc unitOfWorkOptionsProvider;
+
+        public UnitOfWork(IDatabaseConnectionFactory connectionFactory, UnitOfWorkOptionsProviderFunc unitOfWorkOptionsProvider)
         {
             this.connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+            this.unitOfWorkOptionsProvider = unitOfWorkOptionsProvider ?? throw new ArgumentNullException(nameof(unitOfWorkOptionsProvider));
+        }
+
+        public UnitOfWork(IDatabaseConnectionFactory connectionFactory, UnitOfWorkOptions unitOfWorkOptions)
+            : this(connectionFactory, () => unitOfWorkOptions)
+        {
+        }
+
+        public UnitOfWork(IDatabaseConnectionFactory connectionFactory)
+            : this(connectionFactory, UnitOfWorkOptions.Default)
+        {
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Transaction?.Dispose();
+                Connection?.Dispose();
+
+                Transaction = null;
+                Connection = null;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (Transaction is not null)
+            {
+                await Transaction.DisposeAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+            }
+
+            if (Connection is not null)
+            {
+                await Connection.DisposeAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+            }
+
+            Connection = null;
+            Transaction = null;
+
+            Dispose(false);
+
+#pragma warning disable CA1816
+
+            // This is a DisposeAsync method, therefore SuppressFinalize call is appropriate in this context
+            GC.SuppressFinalize(this);
+
+#pragma warning restore CA1816 
         }
 
         public void Dispose()
         {
-            Transaction?.Dispose();
-            Connection?.Dispose();
+            Dispose(true);
 
-            Transaction = null;
-            Connection = null;
+            GC.SuppressFinalize(this);
         }
+
+        public UnitOfWorkOptions Options => unitOfWorkOptionsProvider() ?? UnitOfWorkOptions.Default;
 
         /// <inheritdoc />
         public DbConnection Connection { get; private set; }
@@ -37,8 +89,12 @@ namespace FP.UoW
         {
             if (Connection != null)
             {
-                throw new InvalidOperationException(
-                    "There is already a database connection open, you must close it before opening another one");
+                if (Options.ThrowOnMultipleConnectionsAttempts)
+                {
+                    throw new InvalidOperationException("There is already a database connection open, you must close it before opening another one");
+                }
+
+                return;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -48,33 +104,11 @@ namespace FP.UoW
 
             if (newConnection is null)
             {
-                throw new InvalidOperationException(
-                    "No DbConnection instance was created, implementation returned null");
+                throw new InvalidOperationException("No DbConnection instance was created, implementation returned null");
             }
 
             await newConnection.OpenAsync(cancellationToken)
                 .ConfigureAwait(false);
-
-            Connection = newConnection;
-        }
-
-        public void OpenConnection()
-        {
-            if (Connection != null)
-            {
-                throw new InvalidOperationException(
-                    "There is already a database connection open, you must close it before opening another one");
-            }
-
-            var newConnection = connectionFactory.MakeNew();
-
-            if (newConnection is null)
-            {
-                throw new InvalidOperationException(
-                    "No DbConnection instance was created, implementation returned null");
-            }
-
-            newConnection.Open();
 
             Connection = newConnection;
         }
@@ -89,8 +123,7 @@ namespace FP.UoW
 
             if (Transaction != null)
             {
-                throw new InvalidOperationException(
-                    "There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
+                throw new InvalidOperationException("There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -104,32 +137,17 @@ namespace FP.UoW
             Connection = null;
         }
 
-        public void CloseConnection()
-        {
-            if (Connection is null)
-            {
-                return;
-            }
-
-            if (Transaction != null)
-            {
-                throw new InvalidOperationException(
-                    "There is a transaction running, you cannot close the database connection until you don't decide what to do with the transaction");
-            }
-
-            Connection.Close();
-            Connection.Dispose();
-
-            Connection = null;
-        }
-
         /// <inheritdoc />
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (Transaction != null)
             {
-                throw new InvalidOperationException(
-                    "There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+                if (Options.ThrowOnMultipleTransactionsAttempts)
+                {
+                    throw new InvalidOperationException("There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
+                }
+
+                return;
             }
 
             if (Connection is null)
@@ -142,24 +160,6 @@ namespace FP.UoW
 
             var newTransaction = await Connection.BeginTransactionAsync(cancellationToken)
                 .ConfigureAwait(false);
-
-            Transaction = newTransaction;
-        }
-
-        public void BeginTransaction()
-        {
-            if (Transaction != null)
-            {
-                throw new InvalidOperationException(
-                    "There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
-            }
-
-            if (Connection is null)
-            {
-                OpenConnection();
-            }
-
-            var newTransaction = Connection.BeginTransaction();
 
             Transaction = newTransaction;
         }
@@ -186,21 +186,6 @@ namespace FP.UoW
                 .ConfigureAwait(false);
         }
 
-        public void CommitTransaction()
-        {
-            if (Transaction is null)
-            {
-                throw new InvalidOperationException("You must begin a transaction before committing it");
-            }
-
-            Transaction.Commit();
-            Transaction.Dispose();
-
-            Transaction = null;
-
-            CloseConnection();
-        }
-
         /// <inheritdoc />
         public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
         {
@@ -219,21 +204,6 @@ namespace FP.UoW
 
             await CloseConnectionAsync(cancellationToken)
                 .ConfigureAwait(false);
-        }
-
-        public void RollbackTransaction()
-        {
-            if (Transaction is null)
-            {
-                throw new InvalidOperationException("You must begin a transaction before rolling it back");
-            }
-
-            Transaction.Rollback();
-            Transaction.Dispose();
-
-            Transaction = null;
-
-            CloseConnection();
         }
     }
 }

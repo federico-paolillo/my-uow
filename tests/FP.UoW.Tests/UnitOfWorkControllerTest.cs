@@ -44,7 +44,7 @@ namespace FP.UoW.Tests
             }
 
             unitOfWorkMock.Verify(uow => uow.BeginTransactionAsync(CancellationToken.None), Times.Once);
-            unitOfWorkMock.Verify(uow => uow.CommitTransaction(), Times.Once);
+            unitOfWorkMock.Verify(uow => uow.CommitTransactionAsync(CancellationToken.None), Times.Once);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace FP.UoW.Tests
 
             unitOfWorkMock.Verify(uow => uow.BeginTransactionAsync(CancellationToken.None), Times.Once);
             unitOfWorkMock.Verify(uow => uow.RollbackTransactionAsync(CancellationToken.None), Times.Once);
-            unitOfWorkMock.Verify(uow => uow.CommitTransaction(), Times.Never);
+            unitOfWorkMock.Verify(uow => uow.CommitTransactionAsync(CancellationToken.None), Times.Never);
         }
     }
 }

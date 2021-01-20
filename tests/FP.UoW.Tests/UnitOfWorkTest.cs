@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FP.UoW.Tests
 {
-    public sealed class UnitOfWorkAsyncTest
+    public sealed class UnitOfWorkTest
     {
         [Test]
         public async Task A_Connection_can_t_be_open_twice()
@@ -139,6 +139,99 @@ namespace FP.UoW.Tests
             }
 
             Assert.That(TryCloseConnectionAsync, Throws.Nothing);
+        }
+
+        [Test]
+        public async Task AsyncDispose_actually_cleans_up()
+        {
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
+            var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
+
+            //Note: never use an async disposable like this. It might make a mess if the .ctor fails. For the test it's ok
+
+            var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory);
+
+            await using (unitOfWork)
+            {
+                await unitOfWork.OpenConnectionAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+
+                await unitOfWork.BeginTransactionAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+
+                //Pretending to forget to close/rollback
+
+                Assert.That(unitOfWork.Connection, Is.Not.Null);
+                Assert.That(unitOfWork.Transaction, Is.Not.Null);
+            }
+
+            Assert.That(unitOfWork.Connection, Is.Null);
+            Assert.That(unitOfWork.Transaction, Is.Null);
+        }
+
+        [Test]
+        public async Task Multiple_transaction_errors_are_ignored_when_the_appropriate_option_is_specified()
+        {
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
+            var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
+
+            var options = new UnitOfWorkOptions
+            {
+                ThrowOnMultipleTransactionsAttempts = false,
+                ThrowOnMultipleConnectionsAttempts = true
+            };
+
+            await using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory, options);
+
+            await unitOfWork.BeginTransactionAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            async Task BeginTransactionAgainAsync()
+            {
+                await unitOfWork.BeginTransactionAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+            }
+
+            Assert.DoesNotThrowAsync(BeginTransactionAgainAsync);
+        }
+
+        [Test]
+        public async Task Multiple_connections_errors_are_ignored_when_the_appropriate_option_is_specified()
+        {
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
+            var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
+
+            var options = new UnitOfWorkOptions
+            {
+                ThrowOnMultipleTransactionsAttempts = true,
+                ThrowOnMultipleConnectionsAttempts = false
+            };
+
+            await using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory, options);
+
+            await unitOfWork.OpenConnectionAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            async Task OpenConnectionAgainAsync()
+            {
+                await unitOfWork.OpenConnectionAsync()
+                    .ConfigureAwait(continueOnCapturedContext: false);
+            }
+
+            Assert.DoesNotThrowAsync(OpenConnectionAgainAsync);
+        }
+
+        [Test]
+        public async Task If_OptionsFactory_returns_null_default_options_are_used_as_fallback()
+        {
+            var sqliteDatabaseConnectionString = new SQLiteDatabaseConnectionString("Data Source = whatever.db");
+            var sqliteDatabaseConnectionFactory = new SQLiteDatabaseConnectionFactory(sqliteDatabaseConnectionString);
+
+            UnitOfWorkOptionsProviderFunc optsFunc = () => null;
+
+            await using var unitOfWork = new UnitOfWork(sqliteDatabaseConnectionFactory, optsFunc);
+
+            Assert.That(unitOfWork.Options, Is.EqualTo(UnitOfWorkOptions.Default));
         }
     }
 }

@@ -15,8 +15,10 @@ jobs:
       - name: Build
         run: dotnet build
       - name: Test
-        run: dotnet test --collect "XPlat Code Coverage" --settings tests.runsettings --results-directory ./codecov
+        run: dotnet test --settings ci.runsettings
       - name: Upload Codecov
         uses: codecov/codecov-action@v1
         with:
-          directory: ./codecov/**/*.cobertura.xml
+          file: "'./FP.UoW-Codecov/**/*.info'"
+          fail_ci_if_error: true
+          name: FP.UoW-CI

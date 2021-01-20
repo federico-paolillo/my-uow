@@ -5,27 +5,27 @@ VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW", "src\FP.UoW\FP.UoW.csproj", "{C508D7CF-12E2-497D-A7D9-6E1E95925B8B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{599337C8-B377-405C-BAA1-6440C8CB2FCA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Items", "00 Items", "{599337C8-B377-405C-BAA1-6440C8CB2FCA}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		ci.runsettings = ci.runsettings
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		global.json = global.json
 		LICENSE = LICENSE
 		README.md = README.md
-		tests.runsettings = tests.runsettings
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.SQLite", "src\drivers\FP.UoW.SQLite\FP.UoW.SQLite.csproj", "{BC969773-89DA-4CB5-BA36-63E03C7FA613}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Tests", "tests\FP.UoW.Tests\FP.UoW.Tests.csproj", "{02FDF4BF-3851-4F10-B9C7-926C6C782B9A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1E6E053C-9938-48CB-ABE3-3C5E4782A302}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Tests", "02 Tests", "{1E6E053C-9938-48CB-ABE3-3C5E4782A302}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.Sql", "src\drivers\FP.UoW.SQL\FP.UoW.Sql.csproj", "{6F5E271C-C098-4FC1-AC8F-C6C4F126B442}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{E24173A1-162C-4345-9911-5BA7550F46D9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Drivers", "01 Drivers", "{E24173A1-162C-4345-9911-5BA7550F46D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FP.UoW.DependencyInjection", "src\FP.UoW.DependencyInjection\FP.UoW.DependencyInjection.csproj", "{454101FB-EC95-4573-8FEB-60A5A5F12099}"
 EndProject
@@ -45,7 +45,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
 		.github\workflows\draft-release.yml = .github\workflows\draft-release.yml
-		.github\workflows\master-continuous-integration.yml = .github\workflows\master-continuous-integration.yml
 	EndProjectSection
 EndProject
 Global

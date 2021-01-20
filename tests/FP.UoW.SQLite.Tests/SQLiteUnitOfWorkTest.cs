@@ -1,21 +1,21 @@
-﻿using Dapper;
+using Dapper;
 
 using FP.UoW.DependencyInjection;
-using FP.UoW.Sql.DependencyInjection;
-using FP.UoW.Sql.Tests.Infrastructure;
+using FP.UoW.SQLite.DependencyInjection;
+using FP.UoW.SQLite.Tests.Infrastructure;
 
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
+using System.IO;
 using System.Threading.Tasks;
 
-namespace FP.UoW.Sql.Tests
+namespace FP.UoW.SQLite.Tests
 {
-    public sealed class SqlUnitOfWorkAsyncTest
+    public sealed class SQLiteUnitOfWorkTest
     {
-        private string databaseName;
+        private string databaseFileName;
 
         private TestModel randomModel;
 
@@ -26,19 +26,15 @@ namespace FP.UoW.Sql.Tests
         private IUnitOfWork unitOfWork;
 
         [SetUp]
-        public async Task Setup()
+        public void Setup()
         {
-            databaseName = Randomness.DatabaseName();
+            databaseFileName = Path.GetRandomFileName();
 
-            await CreateDatabaseAsync()
-                .ConfigureAwait(false);
-
-            var databaseConnectionString =
-                $@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true; Initial Catalog = {databaseName}";
+            var databaseConnectionString = $"Data Source = {databaseFileName}";
 
             serviceProvider = new ServiceCollection()
                 .AddUoW()
-                .ForSql(databaseConnectionString)
+                .ForSQLite(databaseConnectionString)
                 .BuildServiceProvider();
 
             serviceScope = serviceProvider.CreateScope();
@@ -48,18 +44,8 @@ namespace FP.UoW.Sql.Tests
             randomModel = TestModel.Random();
         }
 
-        [TearDown]
-        public async Task TearDown()
-        {
-            serviceScope?.Dispose();
-            serviceProvider?.Dispose();
-
-            await DropDatabaseAsync()
-                .ConfigureAwait(false);
-        }
-
         [Test]
-        public async Task Reads_and_writes_from_Sql()
+        public async Task Reads_and_writes_from_SQLite()
         {
             await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(false);
@@ -78,10 +64,8 @@ namespace FP.UoW.Sql.Tests
         }
 
         [Test]
-        public async Task Writes_to_Sql_can_be_rolled_back()
+        public async Task Writes_to_SQLite_can_be_rolled_back()
         {
-            //Step 1
-
             await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(false);
 
@@ -90,8 +74,6 @@ namespace FP.UoW.Sql.Tests
 
             await unitOfWork.CommitTransactionAsync()
                 .ConfigureAwait(false);
-
-            //Step 2
 
             await unitOfWork.BeginTransactionAsync()
                 .ConfigureAwait(false);
@@ -105,8 +87,6 @@ namespace FP.UoW.Sql.Tests
             await unitOfWork.RollbackTransactionAsync()
                 .ConfigureAwait(false);
 
-            //Step 3
-
             await unitOfWork.OpenConnectionAsync()
                 .ConfigureAwait(false);
 
@@ -117,12 +97,21 @@ namespace FP.UoW.Sql.Tests
                 .ConfigureAwait(false);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            serviceScope?.Dispose();
+            serviceProvider?.Dispose();
+
+            File.Delete(databaseFileName);
+        }
+
         private async Task AssertNoTestModelRowsAsync()
         {
             var count = await unitOfWork.Connection.ExecuteScalarAsync<int>(@"
                 SELECT COUNT(*) FROM TestModels;
             ", transaction: unitOfWork.Transaction)
-                .ConfigureAwait(false);
+            .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.That(count, Is.Zero);
         }
@@ -141,9 +130,9 @@ namespace FP.UoW.Sql.Tests
         {
             await unitOfWork.Connection.ExecuteAsync(@"
                 CREATE TABLE TestModels(
-                    Id INT PRIMARY KEY,
-                    ColumnOne NVARCHAR(MAX) NOT NULL,
-                    ColumnTwo NVARCHAR(MAX) NOT NULL
+                    Id TEXT PRIMARY KEY,
+                    ColumnOne TEXT NOT NULL,
+                    ColumnTwo TEXT NOT NULL
                 );", transaction: unitOfWork.Transaction)
                 .ConfigureAwait(false);
         }
@@ -166,29 +155,6 @@ namespace FP.UoW.Sql.Tests
             Assert.That(testModel.Id, Is.EqualTo(randomModel.Id));
             Assert.That(testModel.ColumnOne, Is.EqualTo(randomModel.ColumnOne));
             Assert.That(testModel.ColumnTwo, Is.EqualTo(randomModel.ColumnTwo));
-        }
-
-        private async Task DropDatabaseAsync()
-        {
-            await using var connection =
-                new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
-
-            //Drop any pending Connections
-
-            await connection.ExecuteAsync($@"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;")
-                .ConfigureAwait(false);
-
-            await connection.ExecuteAsync($@"DROP DATABASE [{databaseName}]; ")
-                .ConfigureAwait(false);
-        }
-
-        private async Task CreateDatabaseAsync()
-        {
-            await using var connection =
-                new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
-
-            await connection.ExecuteAsync($@"CREATE DATABASE [{databaseName}];")
-                .ConfigureAwait(false);
         }
     }
 }

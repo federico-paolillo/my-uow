@@ -1,8 +1,8 @@
-name: draft-releases
+name: release
 on:
   push:
     tags:
-      - 'v*.*.*-draft*'
+      - 'v*.*.*'
 jobs:
   release:
     runs-on: windows-2019
@@ -21,14 +21,14 @@ jobs:
         run: dotnet test
       - name: Package FP.UoW solution
         run: dotnet pack --configuration Release --output ${{github.workspace}}/nupkgs
-      - name: Draft release
+      - name: Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           release_name: Release ${{github.ref}}
           tag_name: ${{github.ref}}
-          draft: true
+          draft: false
       # upload-release-asset does not support multiple files at once.
       # To work around that lack of support I have to write a bash script that uses hub to upload assets to a release
       - name: Upload assets with GitHub hub
@@ -38,4 +38,6 @@ jobs:
         # ${GITHUB_REF##*/} is removing a long prefix of */ leaving only the remainder of the tag
         run: hub release edit $(find ${{github.workspace}}/nupkgs -type f \( -name "*.nupkg" -o -name "*.snupkg" \) -printf "-a %p") ${GITHUB_REF##*/}
         shell: bash
+      - name: Publish to NuGet
+        run: dotnet nuget push ${{github.workspace}}/nupkgs --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
           

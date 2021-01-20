@@ -1,5 +1,8 @@
 name: continuous-integration
-on: push
+on: 
+ push:
+  tags-ignore:
+   - 'v*.*.*'
 jobs:
   test:
     runs-on: windows-2019

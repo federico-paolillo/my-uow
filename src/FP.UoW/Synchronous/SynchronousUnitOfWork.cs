@@ -29,7 +29,7 @@ namespace FP.UoW.Synchronous
         {
         }
 
-        private UnitOfWorkOptions UnitOfWorkOptions => unitOfWorkOptionsProvider();
+        public UnitOfWorkOptions Options => unitOfWorkOptionsProvider() ?? UnitOfWorkOptions.Default;
 
         /// <inheritdoc />
         public DbConnection Connection { get; private set; }
@@ -61,7 +61,7 @@ namespace FP.UoW.Synchronous
         {
             if (Connection != null)
             {
-                if (UnitOfWorkOptions.ThrowOnMultipleConnectionsAttempts)
+                if (Options.ThrowOnMultipleConnectionsAttempts)
                 {
                     throw new InvalidOperationException("There is already a database connection open, you must close it before opening another one");
                 }
@@ -105,7 +105,7 @@ namespace FP.UoW.Synchronous
         {
             if (Transaction != null)
             {
-                if (UnitOfWorkOptions.ThrowOnMultipleTransactionsAttempts)
+                if (Options.ThrowOnMultipleTransactionsAttempts)
                 {
                     throw new InvalidOperationException("There is a transaction already running, you cannot start a new transaction until you don't decide what to do with the transaction");
                 }

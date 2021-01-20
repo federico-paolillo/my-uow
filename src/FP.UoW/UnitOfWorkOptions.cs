@@ -5,7 +5,7 @@ namespace FP.UoW
     /// <summary>
     /// Options that configure <see cref="IUnitOfWork"/> and <see cref="ISynchronousUnitOfWork"/> behavior.
     /// </summary>
-    public sealed class UnitOfWorkOptions
+    public sealed record UnitOfWorkOptions
     {
         public static readonly UnitOfWorkOptions Default = new()
         {

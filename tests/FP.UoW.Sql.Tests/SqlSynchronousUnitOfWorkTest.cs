@@ -1,21 +1,20 @@
-using Dapper;
+﻿using Dapper;
 
 using FP.UoW.DependencyInjection;
-using FP.UoW.SQLite.DependencyInjection;
-using FP.UoW.SQLite.Tests.Infrastructure;
+using FP.UoW.Sql.DependencyInjection;
+using FP.UoW.Sql.Tests.Infrastructure;
 using FP.UoW.Synchronous;
 
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
-using System.IO;
-
-namespace FP.UoW.SQLite.Tests
+namespace FP.UoW.Sql.Tests
 {
-    public sealed class SQLiteUnitOfWorkSynchronousTest
+    public sealed class SqlSynchronousUnitOfWorkTest
     {
-        private string databaseFileName;
+        private string databaseName;
 
         private TestModel randomModel;
 
@@ -28,14 +27,17 @@ namespace FP.UoW.SQLite.Tests
         [SetUp]
         public void Setup()
         {
-            databaseFileName = Path.GetRandomFileName();
+            databaseName = Randomness.DatabaseName();
 
-            var databaseConnectionString = $"Data Source = {databaseFileName}";
+            CreateDatabase();
+
+            var databaseConnectionString =
+                $@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true; Initial Catalog = {databaseName}";
 
             serviceProvider = new ServiceCollection()
                 .AddUoW()
                 .AddSynchronousImplementation()
-                .ForSQLite(databaseConnectionString)
+                .ForSql(databaseConnectionString)
                 .BuildServiceProvider();
 
             serviceScope = serviceProvider.CreateScope();
@@ -45,8 +47,18 @@ namespace FP.UoW.SQLite.Tests
             randomModel = TestModel.Random();
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            unitOfWork?.Dispose();
+            serviceScope?.Dispose();
+            serviceProvider?.Dispose();
+
+            DropDatabase();
+        }
+
         [Test]
-        public void Reads_and_writes_from_SQLite()
+        public void Reads_and_writes_from_Sql()
         {
             unitOfWork.BeginTransaction();
 
@@ -60,13 +72,17 @@ namespace FP.UoW.SQLite.Tests
         }
 
         [Test]
-        public void Writes_to_SQLite_can_be_rolled_back()
+        public void Writes_to_Sql_can_be_rolled_back()
         {
+            //Step 1
+
             unitOfWork.BeginTransaction();
 
             CreateTable();
 
             unitOfWork.CommitTransaction();
+
+            //Step 2
 
             unitOfWork.BeginTransaction();
 
@@ -76,20 +92,13 @@ namespace FP.UoW.SQLite.Tests
 
             unitOfWork.RollbackTransaction();
 
+            //Step 3
+
             unitOfWork.OpenConnection();
 
             AssertNoTestModelRows();
 
             unitOfWork.CloseConnection();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            serviceScope?.Dispose();
-            serviceProvider?.Dispose();
-
-            File.Delete(databaseFileName);
         }
 
         private void AssertNoTestModelRows()
@@ -114,10 +123,17 @@ namespace FP.UoW.SQLite.Tests
         {
             unitOfWork.Connection.Execute(@"
                 CREATE TABLE TestModels(
-                    Id TEXT PRIMARY KEY,
-                    ColumnOne TEXT NOT NULL,
-                    ColumnTwo TEXT NOT NULL
+                    Id INT PRIMARY KEY,
+                    ColumnOne NVARCHAR(MAX) NOT NULL,
+                    ColumnTwo NVARCHAR(MAX) NOT NULL
                 );", transaction: unitOfWork.Transaction);
+        }
+
+        private void InsertTestModelRow()
+        {
+            unitOfWork.Connection.Execute(@"
+                    INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES(@Id, @ColumnOne, @ColumnTwo);
+                ", transaction: unitOfWork.Transaction, param: randomModel);
         }
 
         private void AssertCanReadTestModelRow()
@@ -131,11 +147,23 @@ namespace FP.UoW.SQLite.Tests
             Assert.That(testModel.ColumnTwo, Is.EqualTo(randomModel.ColumnTwo));
         }
 
-        private void InsertTestModelRow()
+        private void DropDatabase()
         {
-            unitOfWork.Connection.Execute(@"
-                    INSERT INTO TestModels(Id, ColumnOne, ColumnTwo) VALUES(@Id, @ColumnOne, @ColumnTwo);
-                ", transaction: unitOfWork.Transaction, param: randomModel);
+            using var connection =
+                new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
+
+            //Drop any pending Connections
+
+            connection.Execute($@"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;");
+            connection.Execute($@"DROP DATABASE [{databaseName}];");
+        }
+
+        private void CreateDatabase()
+        {
+            using var connection =
+                new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Integrated Security = true;");
+
+            connection.Execute($@"CREATE DATABASE [{databaseName}];");
         }
     }
 }
